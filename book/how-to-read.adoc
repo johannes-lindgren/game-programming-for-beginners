@@ -1,0 +1,10 @@
+== How to Read This Book
+
+- Play around with your own examples--don't read the book from cover to cover.
+
+
+=== Resources
+
+When looking for resources, use search engines and chat bots (such as ChatGPT).
+
+- Chat bots (such as ChatGPT) might give inaccurate information, but they are really good at finding it fast.

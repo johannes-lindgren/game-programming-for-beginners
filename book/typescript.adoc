@@ -1,0 +1,5 @@
+== TypeScript
+
+The function's arguments together with the return value--without the implementation within the curly braces (`{}`)--is called the _interface_. A function can be thought of as a black box that takes input _arguments_ and _returns_ an output. You do not get to see what's inside the box; that is, how it's implemented. The surface of the black box is the interface, while the mechanism within the box are implementation details.
+
+// TODO visualization of function

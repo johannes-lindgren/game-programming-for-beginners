@@ -1,10 +1,3 @@
-= Game Programming for beginners
-Johannes Lindgren
-:description: Start programming games with JavaScript
-:experimental:
-:stem:
-:toc:
-
 == Hello, world
 
 Let's create a primitive, first website. It won't contain any JavaScript yet. Instead, we will create it purely with HTML. You've probably heard of HTML before: it is a simple so-called _markup_ language that is used together with CSS and JavaScript to create web sites. Since we will focus on game development with JavaScript, we won't put much focus on HTML. Nevertheless, we need a basic HTML document to load our JavaScript in the first place.
@@ -460,6 +453,8 @@ You're Werner Heisenberg!
 
 A mathematical function is something that takes an input and produces an output. For example, a function stem:[f(x) = 10x] gives 10 times the amount for a given stem:[x].
 
+// TODO infographics
+
 In JavaScript, a function is a procedure that _returns_ one value as output. For example:
 
 [source,javascript]
@@ -486,13 +481,135 @@ const ringArea = circleArea(10) - circleArea(10)
 
 === Objects
 
-// TODO
+Often times, you will have data that is related. For example, a player might have a name, a position, velocity, health, and so on:
 
-Sometimes
+[source,javascript]
+----
+const name = 'John Doe'
+const health = 50
+const maxHealth = 100
+const positionX = 0
+const positionY = 0
+const velocityX = 0
+const velocityY = 0
+----
+
+If there are two players, you might need to rename the identifiers above, so that you don't get naming collisions:
+
+[source,javascript]
+----
+const player1Name = 'John Doe'
+const player1Health = 50
+const player1MaxHealth = 100
+const player1PositionX = 10
+const player1PositionY = -3
+const player1VelocityX = 0.5
+const player1VelocityY = 0.25
+----
+
+Clearly, the variable names get very long and annoying to read.
+
+Passing this data around also becomes tedious. For example, a function that calculates where the player is moving in three dimensions might need the following arguments:
+
+[source,javascript]
+----
+// Don't ❌
+const nextPosition = (
+  positionX,
+  positionY,
+  positionZ,
+  velocityX,
+  velocityY,
+  velocityZ,
+) => {
+  // Implementation details...
+}
+
+const player1NextPos = nextPosition(
+  player1PositionX,
+  player1PositionY,
+  player1PositionZ,
+  player1VelocityY,
+  player1VelocityY,
+  player1VelocityZ,
+)
+----
+.Can you spot the error?
+
+The number of argument become to numerous, so it gets difficult to identify which is which.
+
+Rather than storing these values in individual identifiers, group the data with _objects_:
+
+[source,javascript]
+----
+const player1 = {
+  name: 'Werner Heisenberg',
+  health: 50,
+  maxHealth: 200,
+  positionX: 10,
+  positionY: -3,
+  velocityX: 0.5,
+  velocityY: 0.25,
+}
+----
+
+An object is defined with an opening curly brace (`{`), followed by a comma-separated list of properties, and closed with a closing curly brace (`}`)footnote:[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer]. A property consists of a property name, followed by a colon (`:`), and an associated value. In the example above, everything after the equal sign (`=`) is an object, and `health` is a property with the value `50`.
+
+Read values from the object with a period (`.`), followed by the property name:
+
+[source,javascript]
+----
+// Prints "Werner Heisenberg"
+console.log(player1.name)
+
+// Prints "Health: 25%"
+const healthPercent = 100 * player1.health / player1.maxHealth
+console.log(`Health: ${healthPercent}%`)
+----
+
+With the object, the word _player1_ only appears a single time, but the words _position_ and _velocity_ are still repeated twice. An object is a value, just like numbers, strings, and functions, and can be used as property values as such:
+
+[source,javascript]
+----
+const player1 = {
+  name: 'Werner Heisenberg',
+  health: 50,
+  maxHealth: 200,
+  position: {
+    x: 10,
+    y: -3,
+  },
+  velocity: {
+    x: 0.5,
+    y: 0.25,
+  },
+}
+----
+
+To access these nested properties, just use the dot notation twice:
+
+[source,javascript]
+----
+console.log(`x-position: ${player1.position.x}`)
+----
+
+Note that the curly braces (`{}`) in the object have nothing in common with the curly braces in functions. A function can return an object as such:
+
+[source,javascript]
+----
+// This curly brace denotes a function body
+const createVector = (x, y) => {
+  // These curly braces denotes an object
+  return {
+    x: x,
+    y: y,
+  }
+}
+----
 
 == Canvas
 
-With the basics that I have taught you in the previous chapter, we are now equipped to start drawing things on the screen.
+With the basic concepts from the previus chapter, you are now equipped to start drawing things on the screen.
 
 === Creating elements
 
@@ -562,28 +679,16 @@ ctx.rect(20, 20, 150, 100);
 ctx.stroke();
 ----
 
-You should see:
+_Et voilà!_
 
 image::html-canvas-rectangle.png[]
 
-
+=== Animations
 
 === Cover the screen
 
 
-== Your first game--moving dot
 
-[source,js]
-----
-const canvasElement = document.createElement('canvas')
-document.body.appendChild(canvasElement)
-
-const ctx = canvasElement.getContext("2d")
-
-ctx.beginPath();
-ctx.rect(20, 20, 150, 100);
-ctx.stroke();
-----
-
+== Exercises
 
 // TODO exercise: camelCase()

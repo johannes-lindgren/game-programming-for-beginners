@@ -1,0 +1,8 @@
+== What to expect
+
+- Fun
+
+=== What to _Not_ Expect
+
+- A comprehensive explanation of the JavaScript programming language
+- Comprehensive documentation of various JavaScript library, such as the DOM.

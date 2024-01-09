@@ -1,0 +1,9 @@
+= Game Programming for beginners
+Johannes Lindgren
+:description: Start programming games with JavaScript
+:experimental:
+:stem:
+:toc:
+
+:imagesdir: ./intro
+include::./intro/index.adoc[]
