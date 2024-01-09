@@ -6,4 +6,20 @@ Start programming games with JavaScript.
 
 Disclaimer: I'll probably never finish this book. But hopefully, the beginning will bring some joy.
 
-[] test
+* [] Pull request template
+* [] CI/CD workflow
+  ** [ ] auto-publish website
+  ** [ ] auto-publish PDF
+  ** [ ] branch protection rules and other configuration
+* Starter project
+  ** [ ] ESLint config
+  ** [ ] Prettier
+* Misc
+  ** [ ] custom style for HTML output
+  ** [ ] Set up email address
+* Content parts
+  ** [x] Intro
+  ** [] 2d-games with Canvas
+  ** [] Compiled JavaScript
+  ** [] TypeScript
+  ** [] Matter.js
