@@ -1,0 +1,9 @@
+= Game Programming for Beginners
+
+Start programming games with JavaScript.
+
+== Progress
+
+Disclaimer: I'll probably never finish this book. But hopefully, the beginning will bring some joy.
+
+[] test
