@@ -1,0 +1,589 @@
+= Game Programming for beginners
+Johannes Lindgren
+:description: Start programming games with JavaScript
+:experimental:
+:stem:
+:toc:
+
+== Hello, world
+
+Let's create a primitive, first website. It won't contain any JavaScript yet. Instead, we will create it purely with HTML. You've probably heard of HTML before: it is a simple so-called _markup_ language that is used together with CSS and JavaScript to create web sites. Since we will focus on game development with JavaScript, we won't put much focus on HTML. Nevertheless, we need a basic HTML document to load our JavaScript in the first place.
+
+Create a new file, `index.html`, and open it in a text editor. Type the following into the file `index.html`. Don't forget to save:
+
+[source,html]
+----
+<html>
+  <head></head>
+  <body>
+      Hello, world!
+  </body>
+</html>
+----
+
+Open the file in the web browser. You can double-click on the file to open it with your default browser. You will see the phrase _Hello, world!_ on the screen:
+
+image::hello-world.png[]
+
+That looks decent enough, but what exactly did we just write? An HTML document is a hierarchy of _elements_. Each HTML document contains at least three unique elements:
+
+- the `<html>` element contains all other elements. 
+- the `<body>` element contains everything that gets displayed on the screen.
+- the `<head>` element contains everything else.
+
+On top op this, our `index.html` document contains one _text node_, `Hello, world`. Since it is contained within the `<body>`, it gets displayed on the screen.
+
+Let's add a new _child_ node to the `<head>` element:
+
+[source,html]
+----
+<html>
+  <head>
+      <title>My first website</title>
+  </head>
+  <body>
+      Hello, world!
+  </body>
+</html>
+----
+
+Save and reload the page. Since the new `<title>` element is not contained within the `<body>`, its contents does not appear on the screen. However, you'll find that the browser tab now contains the text within the `<title>` element:
+
+image::html-title.png[]
+
+HTML stands for Hyper Text Markup Language. Let's get started with a real programming language--JavaScript.
+
+=== The <script> element
+
+A `<script>` element is an HTML node that can contain JavaScript. Its contents gets executed when page is loaded. Remove the `Hello, world!` text from the `<body>`, and add a `<script>` element to `<head>`:
+
+[source,html]
+----
+<html>
+  <head>
+    <title>My first website</title>
+    <script src="/main.js" defer>
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
+----
+
+This element needs two _attributes_:
+
+- `src` points to a JavaScript file.
+- `defer` tells the browser that the script should be executed after the page has been loaded. It's not important to understand the reasons for why it's there, just always include it.
+
+In your file system, next to `index.html`, create a new file `main.js` and add the following contents:
+
+[source,javascript]
+----
+console.log('Hello, JavaScript!')
+----
+
+Save both files, and reload the page. Hit btn:[F12] to open the _developer tools_ and click on the menu:Console[] tab. There, you should see the message _"Hello, JavaScript!"_.
+
+image::console-hello-javascript.png[]
+
+Congratulations to your very first program!
+
+Let's examine it:
+
+[source,js]
+----
+console.log('Hello, JavaScript!')
+----
+
+- `console.log()` is an instruction that prints anything within the parentheses to the console.
+- The two apostrophes `''` tells you that whatever is between the apostrophes forms a so-called _string_. A string is simply a sequence of characters--a text.
+
+From here on, only the contents of the `<script>` element will be printed out, unless `index.html` gets changed in some other way.
+
+== The basics
+
+We will soon draw some shapes on the screen with JavaScript, but before we can do that, we need to first familiarize ourselves with some basic syntax. Stay with me; I'll be as brief as I can.
+
+=== Multiple lines
+
+When a program contains multiple lines, the line gets executed in order:
+
+[source,js]
+----
+console.log('Hello')
+console.log('JavaScript')
+----
+
+The script above prints:
+
+[source]
+----
+Hello
+JavaScript
+----
+
+=== Comments
+
+Often times, it is useful to comment your own code:
+
+[source]
+----
+// My second program
+console.log('Hello')
+console.log('JavaScript')
+----
+
+Anything that comes after `//` is a _comment_, and does not get executed. This book uses inline comments to comment on specific lines in the code.
+
+=== Numbers
+
+Instead of a string, print a number:
+
+[source,js]
+----
+console.log(10)
+----
+
+There are two categories of numbers: integers and floating point numbers.
+
+- Integers are whole numbers on the numbers lines; for example, `0`, `1`, `2`, `43225`, `-1`, and `-3254`.
+- Floating point numbers include some of the values between the integers; for example, `0.1`, `0.25`, `0.234343`, `3.14`, `-134.3455456`. Note that a period (`.`) is used as a decimal point--not a comma. Because there are an infinite number of rational numbers, floating points can only store a portion of them.
+
+There are several numeric _operators_:
+
+[source,js]
+----
+// Addition
+console.log(5 + 2)
+// Subtraction
+console.log(5 - 2)
+// Multiplication
+console.log(5 * 2)
+// Division
+console.log(5 / 2)
+// Remainder
+console.log(5 % 2)
+// Exponentiation
+console.log(5 ** 2)
+----
+
+Which prints:
+
+[source]
+----
+7
+3
+10
+1
+25
+----
+
+Note that you can only perform arithmetic operations with numbers. If you try the following, the code will crash because you're trying to multiply strings, which are distinct from numbers:
+
+[source,js]
+----
+// Don't ❌
+console.log('10' * '2')
+----
+
+You can use several operators in a single _expression_. When they are, they are assigned different precedencefootnote:[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_precedence], as in regular mathematics:
+
+. Parentheses (`()`)
+. Exponentiation (`**`)
+. Multiplication (`*`), division (`/`), and remainder (`%`)
+. Addition (`+`) and subtraction (`-`)
+
+For example:
+
+[source,js]
+----
+// Prints 7
+console.log(2 * 3 + 1)
+// Prints 8
+console.log(2 * (3 + 1))
+// Prints 50
+console.log(5 ** 2 * 2)
+----
+
+Within operators of the same precedence, the language groups them by associativity:
+
+[source,js]
+----
+// Same as (4 / 3) / 2; Prints 0.6666...
+console.log(4 / 3 / 2)
+----
+
+When in doubt, use parenthesis to make the code easy to read:
+
+[source,js]
+----
+console.log((4 / 3) / 2)
+----
+
+=== Identifiers and constants (`const`)
+
+Imagine that two forces are applied to an object with a known mass; then you can calculate the force as such:
+
+[source,js]
+----
+// a = (10 N + 5 N) / 3 kg
+console.log((10 + 5) / 3)
+----
+
+This pretty quickly becomes unreadable; what do the different numbers correspond to? You can assign the values to an identifier:
+
+[source,js]
+----
+const f1 = 10
+const f2 = 5
+const m = 3
+console.log((f1 + f2) / m)
+----
+
+An identifier is a way to refer to value by a _name_--it _identifies_ a value. That makes the code much more readable. This is what happens:
+
+. The value `10` gets stored in memory. The constant `f1` refers to this value.
+. The value `5` gets stored in memory. The constant `f2` refers to this value.
+. The value `3` gets stored in memory. The constant `m` refers to this value.
+. The last line is executed as a sequence of the following steps:
+    .. The value in `f1` gets added to `f2`, which produces a new value `15`. (There is no symbol that refers to this value.)
+    .. The calculated value `15` gets divided by the value that is stored in `m`, which produces the value `5`.
+    .. The value `5` is passed to `console.log()`, which prints out the value in the console.
+
+The names above are acceptable in a small program, but in a larger program--where there easily could be dozens of different identifiers--such short names could easily be confused with one another. Programmers tend to prefer more descriptive names:
+
+[source,js]
+----
+const forceEngine = 10
+const forceDrag = 5
+const mass = 3
+console.log((forceEngine + forceDrag) / mass)
+----
+
+The identifiers adhere to a special naming convention called `camelCase`footnote:[https://en.wikipedia.org/wiki/Camel_case]. An identifier cannot have a space in it--that would be interpreted as two separate symbols. Therefore, to name a word with multiple words, capitalize all words except the first one, and concatenate them.
+
+NOTE: there are other popular naming conventions; for example, Pascal case (`ForceEngine`), kebab case (`force-engine`), and snake case (`snake-case`). They work under different circumstances and have different popularity in different programming languages. For example, kebab case is popular for URLs (including file names), but does not work in JavaScript, where the hyphen (`-`) would be interpreted as a subtraction operator. Pascal case works in JavaScript, but is only used in special circumstances which are covered further down the road in this book.
+
+=== Errors
+
+Execute the following statement:
+
+[source,js]
+----
+console.log('hello')
+----
+
+That prints out the string `'hello'`.
+
+Try to print just `hello` without the apostrophes:
+
+[source,js]
+----
+console.log(hello)
+----
+
+This leads to a common error:
+
+> Uncaught ReferenceError: hello is not defined at index.html
+
+Let's break down the error message:
+
+- _"Uncaught"_: this means that an error occurred, but was never handled, which caused the program to crash.
+- _"`ReferenceError`"_: the type of the error.
+- _"hello is not defined"_: the program tried to
+- _"at index.html"_: the place where the error occurred.When the program grows into many files, this will point to the exact point where the error occurred.
+
+The key phrase here is _"hello is not defined"_. When `hello` is not surrounded by apostrophes, the browser interprets it as an _identifier_.Since there is no identifier with the name `hello`, the program crashes.
+
+Reading error messages is an important skill, as you will encounter many of them as you develop software.
+
+== TODO: title
+
+
+=== Template Strings (Template Literals)
+
+Template stringsfootnote:[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals] allow you to join smaller strings into larger ones. They look like regular strings, but they start and end with backticks (```) instead of apostrophes (`''`). To include another string inside a template string, write:
+
+[source,js]
+----
+const name = 'Johannes'
+console.log(`Hello, ${name}`)
+----
+
+The code that you put within the curly braces `${}` will be joined with the rest of the contents. It can be done repeatedly; for example:
+
+[source,js]
+----
+const firstName = 'Werner'
+const lastName = 'Heisenberg'
+const name = `${firstName} ${lastName}`
+console.log(`Hello, ${name}! Your first name is "${firstName}", and your last name is "${lastName}".`)
+----
+
+prints the following to console:
+
+[source]
+----
+Hello, Werner Heisenberg! Your first name is "Werner", and your last name is "Heisenberg".
+----
+
+
+// TODO numbers in strings
+
+== Procedures
+
+As you construct a larger programs, you need to break up the code into smaller units. For example, if you want to spawn 100 enemies, you don't want to repeat the code that spawns one enemy 100 times. A _procedure_ is a re-usable piece of code, and it looks like:
+
+[source,js]
+----
+() => {
+  // Re-usable code here
+}
+----
+
+A procedure can be _called_, which means that the code within curly braces (`{}`) gets executed. For example, the following procedure will print _"Hello, procedure!"_.
+
+[source,js]
+----
+() => {
+  console.log('Hello, procedure!')
+}
+----
+
+However, if you simply include this in your `<script>`, nothing will happen. That is because you defined the procedure, but you never _called_ it. The statement above doesn't do anything with the values. If you write:
+
+[source,javascript]
+----
+'hello'
+123
+----
+
+Your program first creates a string value `'hello'`, then a numeric value `123`, but it does not do anything with them. Similarly, the procedure `() => { console.log('Hello, procedure!') }` is just a value.
+
+To call it, you first need an identifier that references the procedure. Then, write the name of the identifier followed by parentheses (`()`):
+
+[source,js]
+----
+// Define the procedure
+const greet = () => {
+  console.log('Hello, procedure!')
+}
+// Call the procedure
+greet()
+----
+
+That should print out the string to the console one time. Now, you can call the procedure multiple times:
+
+[source,js]
+----
+// Define the procedure
+const greet = () => {
+  console.log('Hello, procedure!')
+}
+// Prints "Hello, procedure!" four times
+greet()
+greet()
+greet()
+greet()
+----
+
+=== Block Scope
+
+In a procedure, the code within curly braces (`{}`) forms a _block_. A block has access to the identifiers that were declared outside of that block; but the identifiers that were declared inside a block are not visible outside of it.
+
+[source,js]
+----
+const name = "Heisenberg"
+const sayMyName = () => {
+  console.log(`You're ${name}`)
+}
+sayMyName()
+----
+
+[source,js]
+----
+const firstName = 'Werner'
+const sayMyName = () => {
+  const lastName = "Heisenberg"
+  // Ok ✅
+  console.log(`You're ${firstName} ${lastName}`)
+}
+sayMyName()
+// Error ❌
+console.log(`You're ${firstName} ${lastName}`)
+----
+
+
+The final line in the example throws an error, because `lastName` is not accessible outside the procedure; `lastName` is not within scope of the last line.
+
+=== Arguments
+
+As demonstrated in the previous section, you can pass values to a procedures by declaring the identifier above the procedure. This is often useful, but other times, you want to be able to pass different values; in the example in the previous section, you might want to be able to pass different names.
+
+You might have noticed that the syntax for calling a procedure is similar to the `log()` in `console.log()`. That is because `log` _is_ a procedure. The value that appears between the parentheses is called and _argument_, and can be defined as such:
+
+[source,javascript]
+----
+const sayMyName = (name) => {
+  console.log(`You're ${name}!`)
+}
+sayMyName("Heisenberg")
+sayMyName("the man")
+----
+
+This will print
+
+[source]
+----
+You're Heisenberg!
+You're the man!
+----
+
+A procedure can take multiple argument, which are separated by commas (`,`):
+
+[source,javascript]
+----
+const sayMyName = (firstName, lastName) => {
+  console.log(`You're ${firstName} ${lastName}!`)
+}
+sayMyName("Werner", "Heisenberg")
+----
+
+This will print
+
+[source]
+----
+You're Werner Heisenberg!
+----
+
+=== Functions
+
+A mathematical function is something that takes an input and produces an output. For example, a function stem:[f(x) = 10x] gives 10 times the amount for a given stem:[x].
+
+In JavaScript, a function is a procedure that _returns_ one value as output. For example:
+
+[source,javascript]
+----
+const circleArea = (radius) => {
+  return 3.14159 * radius ** 2
+}
+----
+
+Everything after the `return` keyword is the output of the function. When the function is called, it will _evaluate_ to the returned value; just like a numeric expression evaluates to a number (`5 * 2` evaluates to `10`), a function evaluates to the returned value. Here is an example:
+
+[source,javascript]
+----
+const circleArea = (radius) => {
+  return 3.14159 * radius ** 2
+}
+// Assign the area of a circle with radius 5 to a constant
+const myCircleArea = circleArea(5)
+// Log the area of a circle with radius 10
+console.log(circleArea(10))
+// Calculate the area of a ring with diameter 8 and radius 6
+const ringArea = circleArea(10) - circleArea(10)
+----
+
+=== Objects
+
+// TODO
+
+Sometimes
+
+== Canvas
+
+With the basics that I have taught you in the previous chapter, we are now equipped to start drawing things on the screen.
+
+=== Creating elements
+
+In the first chapter, you saw that a web page consists of different elements, and that elements that are presented on the screen are placed within the `<body>` element. Most websites consists of a hierarchy of boxes and characters; so they contain elements like buttons, headings, and paragraphs; each one of these has a corresponding HTML tag (`<button>`, `<h1>`, and `<p>` respectively). This model is called the _box model_, which works well for many types of applications, but video games need more flexibility. The `<canvas>` element allows you to draw anything you like on a 2-dimensional surface. So except for one `<canvas>`, our game does not need any other HTML elements in the `<body>`.
+
+You _could_ add a `<canvas>` element directly to `index.html` as such:
+
+[source, html]
+----
+<html>
+  <head>
+      <title>My first website</title>
+  </head>
+  <body>
+      <canvas></canvas>
+  </body>
+</html>
+----
+
+But to draw on it, you need a reference to the element in JavaScript. So instead, create the element in JavaScript and add it to the `<body>`:
+[source,js]
+----
+const canvasElement = document.createElement('canvas')
+----
+
+`document` is a special object that is available from anywhere. It has a property called `createElement`, whose value is a function that accepts one argument and returns a new element. Think of it this way:
+
+[source,javascript]
+----
+// Pseudo-code
+const document = {
+  createElement: (tag) => {
+    return // create element here
+  }
+}
+----
+
+So `document.createElement` gives a function, and `document.createElement('canvas')` calls that function. The result is an HTML `<canvas>` element, but the result is not automatically added to the `<body>`, so it remains hidden from view. The document contains a second function that lets you add the result from `createElement` to the `<body>`:
+
+[source,javascript]
+----
+const canvasElement = document.createElement('canvas')
+document.body.appendChild(canvasElement)
+----
+
+The `document` represents the entire web page; think of it as representing the  `<html>` element in the `.html` file. Since an HTML document must contain _exactly one_ `<body>` element, you can access it via `document.body`. `body` is another object, which contains a property with the name `appendChild`, which adds the argument to the screen.
+
+Save the file and reload the page. Open the developer tools with btn:[F12] and click on the menu:Elements[] tab. You will see that the `<body>` now contains a `<canvas>` element, but it's invisible in the view. When you hover the element with your cursor, the browser will highlight the element in the view. The canvas is in the view, but it just has the same color as the `<body>` background:
+
+image::html-canvas-element.png[]
+
+All future programs are going to start with these lines of code.
+
+=== Drawing shapes with canvas
+
+The moment of truth is here; draw a rectangle on the `<canvas>`:
+
+[source,js]
+----
+const canvasElement = document.createElement('canvas')
+document.body.appendChild(canvasElement)
+
+const ctx = canvasElement.getContext("2d")
+
+ctx.beginPath();
+ctx.rect(20, 20, 150, 100);
+ctx.stroke();
+----
+
+You should see:
+
+image::html-canvas-rectangle.png[]
+
+
+
+=== Cover the screen
+
+
+== Your first game--moving dot
+
+[source,js]
+----
+const canvasElement = document.createElement('canvas')
+document.body.appendChild(canvasElement)
+
+const ctx = canvasElement.getContext("2d")
+
+ctx.beginPath();
+ctx.rect(20, 20, 150, 100);
+ctx.stroke();
+----
+
+
+// TODO exercise: camelCase()

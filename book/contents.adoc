@@ -1,0 +1,8 @@
+== What you will learn
+
+// We will be working with JavaScript
+// TypeScript
+// Few boring examples with the terminal
+// Easy to read
+// Math
+// Physics
