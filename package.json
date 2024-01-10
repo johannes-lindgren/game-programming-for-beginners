@@ -1,0 +1,15 @@
+{
+  "name": "game-programming-for-beginners",
+  "version": "0.0.1",
+  "description": "Start programming games with JavaScript",
+  "repository": "https://github.com/johannes-lindgren/game-programming-for-beginners.git",
+  "author": "Johannes Lindgren <14206504+johannes-lindgren@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "postinstall": "bundle install",
+    "build": "yarn build:pdf && yarn build:html",
+    "build:pdf": "asciidoctor-pdf book/index.adoc -D dist",
+    "build:html": "asciidoctor book/index.adoc -D dist"
+  }
+}

@@ -673,15 +673,78 @@ const canvasElement = document.createElement('canvas')
 document.body.appendChild(canvasElement)
 
 const ctx = canvasElement.getContext("2d")
-
-ctx.beginPath();
-ctx.rect(20, 20, 150, 100);
-ctx.stroke();
+ctx.fillRect(20, 20, 150, 100);
 ----
 
 _Et voilà!_
 
 image::html-canvas-rectangle.png[]
+
+The `getContext()` functionfootnote:[https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext] returns an object that lets us draw shapes on the canvas. One of these functions is `fillRect()`footnote:[https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect], which draws a rectangle on the screen. The first two argument it takes are the x- and y- coordinates of the rectangle's upper left corner. The last two coordinates are the width and heights.
+
+Set the x- and y- coordinates to zero:
+
+[source,js]
+----
+const canvasElement = document.createElement('canvas')
+document.body.appendChild(canvasElement)
+
+const ctx = canvasElement.getContext("2d")
+ctx.fillRect(0, 0, 150, 100);
+----
+
+That positions the rectangle in the top-left corner:
+
+image::../../../start-programming-games/book/canvas-rectangle-top-left-with-margin.png[]
+
+Why is the rectangle positioned at the top, and not in the bottom-left corner as is the convention in mathematics? As it turns out, this is for historical reasons. When computer graphics became a thing, monitors were made with cathode-ray tubes (CRTs)footnote:[https://en.wikipedia.org/wiki/Cathode-ray_tube]. These tubes would emit electron beams on a phosphorescent screen. When the beam hit the screen, it would light up and mark a pixel. To draw multiple pixels, the beam would sweep across the screen. As it so happens, the standard became that the beam would start in the top-left corner, sweep to the right, jump back to the left side, jump down a pixel, and repeat for the whole screen surface.
+
+image::../../../start-programming-games/book/crt.png[]
+.An electron beam sweeping across a CRT television.
+
+=== Coordinate systems
+
+=== Drawing Exercises
+
+Let's practice some by drawing something cool:
+
+[source,javascript]
+----
+const canvasElement = document.createElement('canvas')
+document.body.appendChild(canvasElement)
+
+const ctx = canvasElement.getContext("2d")
+
+const drawSmugSmiley = (ctx, x, y, headRadius) => {
+  const glassRadius = headRadius / 3
+
+  // Head
+  ctx.fillStyle = 'yellow'
+  ctx.beginPath()
+  ctx.arc(x, y, headRadius, 0, 2 * Math.PI)
+  ctx.fill()
+
+  // Glass and mouth color
+  ctx.fillStyle = 'black'
+
+  // Left glass
+  ctx.beginPath()
+  ctx.arc(x - glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
+  ctx.fill()
+
+  // Right glass
+  ctx.beginPath()
+  ctx.arc(x + glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
+  ctx.fill()
+
+  // Smug smile
+  ctx.beginPath()
+  ctx.arc(x, y + headRadius / 5, 0.25 * headRadius, 0, Math.PI)
+  ctx.stroke()
+}
+
+drawSmugSmiley(ctx, 100, 100, 50)
+----
 
 === Animations
 

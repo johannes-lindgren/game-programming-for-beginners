@@ -4,6 +4,7 @@ Johannes Lindgren
 :experimental:
 :stem:
 :toc:
+// :stylesheet: style.css
 
 include::./front-matter.adoc[]
 
