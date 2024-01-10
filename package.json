@@ -4,7 +4,6 @@
   "description": "Start programming games with JavaScript",
   "repository": "https://github.com/johannes-lindgren/game-programming-for-beginners.git",
   "author": "Johannes Lindgren <14206504+johannes-lindgren@users.noreply.github.com>",
-  "license": "MIT",
   "private": false,
   "scripts": {
     "postinstall": "bundle install",
