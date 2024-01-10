@@ -5,5 +5,7 @@ Johannes Lindgren
 :stem:
 :toc:
 
+include::./front-matter.adoc[]
+
 :imagesdir: ./intro
 include::./intro/index.adoc[]

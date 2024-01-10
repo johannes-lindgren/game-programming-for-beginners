@@ -1,0 +1,30 @@
+== What You Will Learn
+
+- You will get started with programming.
+- JavaScript and TypeScript
+- A tiny bit of HTML and CSS--just to get the JavaScript to run.
+- Linear algebra--yes, you will need to learn some maths, but it will not be very complicated. In game programming, you will be limited by your knowledge in linear algebra, but to get started, you don't need to know a lot.
+- Classical mechanics (physics)--you will learn some basic stuff about the motion of physical motions. If you have prior knowledge, that'll be beneficial when you go on to code on your own.
+
+=== What _Not_ to Expect
+
+- A comprehensive explanation of the JavaScript programming language
+- Comprehensive documentation of various JavaScript library, such as the DOM.
+
+== What you will need
+
+To read this book, you don't need any programming experience. The goal is to learn programming while having fun, and what better way to achieve that by developing games?
+
+This book is divided into several parts. For the first part, all you need is a computer with a web browser.
+
+For the following parts, you will need to install some software. This book will help you with that, but you need to ensure that you have administrator rights and access to the internet.
+
+== How to Read This Book
+
+- Play around with your own examples--don't read the book from cover to cover.
+
+=== Resources
+
+When looking for resources, use search engines and chat bots (such as ChatGPT).
+
+- Chat bots (such as ChatGPT) might give inaccurate information, but they are really good at finding it fast.
