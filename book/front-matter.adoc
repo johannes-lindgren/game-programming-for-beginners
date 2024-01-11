@@ -22,9 +22,7 @@ For the following parts, you will need to install some software. This book will 
 == How to Read This Book
 
 - Play around with your own examples--don't read the book from cover to cover.
-
-=== Resources
-
-When looking for resources, use search engines and chat bots (such as ChatGPT).
-
-- Chat bots (such as ChatGPT) might give inaccurate information, but they are really good at finding it fast.
+- Write all code by hand--resist the temptation of copy-pasting the code. Part of the skill of programming is to type the things on the keyboard. If you copy and paste code from the internet (like from this book), you will miss out on a lot of details. Even though you will run into errors when you mistype something yourself, these events will develop your programming skills.
+- Read the documentation. As a beginner, it's hard to learn everything at once. It's especially difficult to understand technical documentation that was written for experienced programmers. Nevertheless, it is an important skill to master. Furthermore, this book is not extensive enough to teach all the different methods and techniques--that is impossible. Go out and search for information yourself. here are some resources where you can look first:
+  - Chat bots (https://chat.openai.com/[such as ChatGPT])
+  - https://www.w3schools.com/[W3Schools]

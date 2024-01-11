@@ -1,4 +1,10 @@
+:experimental:
+:stem:
+:sectnums:
+
 == Hello, world
+
+=== HTML
 
 Let's create a primitive, first website. It won't contain any JavaScript yet. Instead, we will create it purely with HTML. You've probably heard of HTML before: it is a simple so-called _markup_ language that is used together with CSS and JavaScript to create web sites. Since we will focus on game development with JavaScript, we won't put much focus on HTML. Nevertheless, we need a basic HTML document to load our JavaScript in the first place.
 
@@ -46,7 +52,7 @@ image::html-title.png[]
 
 HTML stands for Hyper Text Markup Language. Let's get started with a real programming language--JavaScript.
 
-=== The <script> element
+=== JavaScript
 
 A `<script>` element is an HTML node that can contain JavaScript. Its contents gets executed when page is loaded. Remove the `Hello, world!` text from the `<body>`, and add a `<script>` element to `<head>`:
 
@@ -93,11 +99,11 @@ console.log('Hello, JavaScript!')
 
 From here on, only the contents of the `<script>` element will be printed out, unless `index.html` gets changed in some other way.
 
-== The basics
+== Basic Syntax
 
 We will soon draw some shapes on the screen with JavaScript, but before we can do that, we need to first familiarize ourselves with some basic syntax. Stay with me; I'll be as brief as I can.
 
-=== Multiple lines
+=== Lines of Code
 
 When a program contains multiple lines, the line gets executed in order:
 
@@ -121,12 +127,12 @@ Often times, it is useful to comment your own code:
 
 [source]
 ----
-// My second program
+// My second program ❤️
 console.log('Hello')
 console.log('JavaScript')
 ----
 
-Anything that comes after `//` is a _comment_, and does not get executed. This book uses inline comments to comment on specific lines in the code.
+Anything that comes after `//` is a _comment_, and does not get executed.
 
 === Numbers
 
@@ -290,8 +296,6 @@ The key phrase here is _"hello is not defined"_. When `hello` is not surrounded 
 
 Reading error messages is an important skill, as you will encounter many of them as you develop software.
 
-== TODO: title
-
 
 === Template Strings (Template Literals)
 
@@ -323,9 +327,13 @@ Hello, Werner Heisenberg! Your first name is "Werner", and your last name is "He
 
 // TODO numbers in strings
 
-== Procedures
+== Functions and Procedures
 
-As you construct a larger programs, you need to break up the code into smaller units. For example, if you want to spawn 100 enemies, you don't want to repeat the code that spawns one enemy 100 times. A _procedure_ is a re-usable piece of code, and it looks like:
+// TODO intro
+
+=== Procedures
+
+As you construct a programs of any notable size, you will need to break up the code into smaller units. For example, to spawn 100 enemies, you don't want to repeat the code that spawns one enemy 100 times. A _procedure_ is a re-usable piece of code, and it looks like:
 
 [source,js]
 ----
@@ -479,7 +487,7 @@ console.log(circleArea(10))
 const ringArea = circleArea(10) - circleArea(10)
 ----
 
-=== Objects
+== Objects
 
 Often times, you will have data that is related. For example, a player might have a name, a position, velocity, health, and so on:
 
@@ -567,7 +575,7 @@ const healthPercent = 100 * player1.health / player1.maxHealth
 console.log(`Health: ${healthPercent}%`)
 ----
 
-With the object, the word _player1_ only appears a single time, but the words _position_ and _velocity_ are still repeated twice. An object is a value, just like numbers, strings, and functions, and can be used as property values as such:
+With the object, the word _player1_ only appears a single time, but the words _position_ and _velocity_ are still repeated twice. An object is a value; just like numbers, strings, and functions; and can be used as property values as such:
 
 [source,javascript]
 ----
@@ -607,6 +615,29 @@ const createVector = (x, y) => {
 }
 ----
 
+You might notice now that the dot notation appears in `console.log()`. `console` is an object with a property `log`. This property contains the function that you've been using so frequently. You can think of `console` as being declared like this:
+
+[source,javascript]
+----
+const console = {
+  log: (message) => {
+    // Implementation
+  },
+}
+----
+
+The reason why you can access `console` without having this statement anywhere is that `console` is a special object that is accessible from anywhere--it has a __global__ scope.
+
+[TIP]
+====
+Try to log the `console` object and see what you get:
+
+[source,javascript]
+----
+console.log(console)
+----
+====
+
 == Canvas
 
 With the basic concepts from the previus chapter, you are now equipped to start drawing things on the screen.
@@ -635,7 +666,8 @@ But to draw on it, you need a reference to the element in JavaScript. So instead
 const canvasElement = document.createElement('canvas')
 ----
 
-`document` is a special object that is available from anywhere. It has a property called `createElement`, whose value is a function that accepts one argument and returns a new element. Think of it this way:
+[#global-objects]
+Just like `console`, `document` is another global object that is available from anywhere. It has a property called `createElement`, whose value is a function that accepts one argument and returns a new element. Think of it this way:
 
 [source,javascript]
 ----
@@ -663,7 +695,7 @@ image::html-canvas-element.png[]
 
 All future programs are going to start with these lines of code.
 
-=== Drawing shapes with canvas
+=== Drawing Rectangles
 
 The moment of truth is here; draw a rectangle on the `<canvas>`:
 
@@ -680,9 +712,11 @@ _Et voilà!_
 
 image::html-canvas-rectangle.png[]
 
-The `getContext()` functionfootnote:[https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext] returns an object that lets us draw shapes on the canvas. One of these functions is `fillRect()`footnote:[https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect], which draws a rectangle on the screen. The first two argument it takes are the x- and y- coordinates of the rectangle's upper left corner. The last two coordinates are the width and heights.
+The `getContext()` functionfootnote:[https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext] returns an object that lets us draw shapes on the canvas. One of these functions is `fillRect()`footnote:[https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect], which draws a rectangle on the screen. The first two argument it takes are the stem:[x]- and stem:[y]- coordinates of the rectangle's upper left corner. The last two coordinates are the width and heights.
 
-Set the x- and y- coordinates to zero:
+=== Computer Graphics Coordinate Systems
+
+To better understand how the coordinate systems in computer graphics work, set the stem:[x]- and stem:[y]- coordinates to `0`:
 
 [source,js]
 ----
@@ -695,61 +729,419 @@ ctx.fillRect(0, 0, 150, 100);
 
 That positions the rectangle in the top-left corner:
 
-image::../../../start-programming-games/book/canvas-rectangle-top-left-with-margin.png[]
+image::canvas-rectangle-top-left-with-margin.png[]
 
-Why is the rectangle positioned at the top, and not in the bottom-left corner as is the convention in mathematics? As it turns out, this is for historical reasons. When computer graphics became a thing, monitors were made with cathode-ray tubes (CRTs)footnote:[https://en.wikipedia.org/wiki/Cathode-ray_tube]. These tubes would emit electron beams on a phosphorescent screen. When the beam hit the screen, it would light up and mark a pixel. To draw multiple pixels, the beam would sweep across the screen. As it so happens, the standard became that the beam would start in the top-left corner, sweep to the right, jump back to the left side, jump down a pixel, and repeat for the whole screen surface.
+In computer graphics, _origin_ (the stem:[(0, 0)] coordinate) is positioned in the top-left corner. The positive stem:[x]-direction is to the right, but the positive stem:[y]-direction is pointing downward.
 
-image::../../../start-programming-games/book/crt.png[]
+image::computer-graphics-coordinate-system.svg[]
+
+At first, this might seem odd--mathematicians has the stem:[y]-axis pointing upwards. However, both are just arbitrary convention, and you will quickly get used to either one.
+
+[NOTE]
+====
+As it turns out, this is for historical reasons. When computer graphics became a thing, monitors were made with cathode-ray tubes (CRTs)footnote:[https://en.wikipedia.org/wiki/Cathode-ray_tube]. These tubes would emit electron beams on a phosphorescent screen. When the beam hit the screen, it would light up and mark a pixel. To draw multiple pixels, the beam would sweep across the screen. As it so happens, the standard became that the beam would start in the top-left corner, sweep to the right, jump back to the left side, jump down a pixel, and repeat for the whole screen surface.
+
 .An electron beam sweeping across a CRT television.
+image::crt.svg[]
+====
 
-=== Coordinate systems
+=== Fullscreen
 
-=== Drawing Exercises
+The black rectangle is not positioned exactly in the top-left corner of the screen--there are 8 pixels of margin. Open the dev tools with btn:[F12], open the menu:Elements[] tab, and select `<body>`. Depending on your web browser, you can see that the body has 8 pixels of _margin_ by default. In `main.js`, update the body's the `style` attribute:
 
-Let's practice some by drawing something cool:
+[source,js]
+----
+const canvasElement = document.createElement('canvas')
+
+document.body.style.margin = '0px'
+document.body.appendChild(canvasElement)
+
+const ctx = canvasElement.getContext("2d")
+ctx.fillRect(0, 0, 150, 100);
+----
+
+That removes the margin:
+
+image::body-no-margin.png[]
+
+NOTE: Even when the `<body>` element didn't explicitly specified any styles, the browser added a default margin of 8 pixels. In the early days of the internet, the browser vendors decided to add this margin by default to all `<body>` elements. Now, existing websites rely on this feature, so it cannot be undone.
+
+Move the rectangle sideways and downwards, by incrementing the stem:[x]- and stem:[y]-values:
+
+[source,js]
+----
+const canvasElement = document.createElement('canvas')
+
+document.body.style.margin = '0px'
+document.body.appendChild(canvasElement)
+
+const ctx = canvasElement.getContext("2d")
+ctx.fillRect(200, 100, 150, 100);
+----
+
+The rectangle moved, but it also seemingly shrunk. Under menu:dev tools[Elements], select the `<canvas>` element: you'll see that the rectangle has simply moved outside the edge of the `<canvas>` element, because the `<canvas>` does not cover the whole screen:
+
+image::canvas-size.png[]
+
+The `<canvas>` element has the two properties `width` and `height` that determines the dimensions of the canvas. Set these to be the same as the dimensions of the `<body>` element:
 
 [source,javascript]
 ----
 const canvasElement = document.createElement('canvas')
+canvasElement.width = document.body.clientWidth
+canvasElement.height = document.body.clientHeight
+
+document.body.style.margin = '0px'
+document.body.appendChild(canvasElement)
+
+const ctx = canvasElement.getContext("2d")
+ctx.fillRect(500, 500, 150, 100)
+----
+
+Now that the canvas is full-screen, the rectangle can be placed anywhere in the view:
+
+image::canvas-full-screen.png[]
+
+=== Drawing Lines Along Paths (Stroke)
+
+`fillRect` is convenient, because lets you draw a rectangle in a single function call. However, to draw other shapes, you need to use __paths__footnote:[https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes#path2d_objects]. A path is a list of points, connected by segments of lines that can be of different shapes.
+
+You can draw one line at the time.
+
+. Begin a new path by calling `ctx.beginPath()`.
+. Add the first point to the path with `ctx.moveTo()`. You can think of this function call as "putting down the pen against the canvas".
+. Insert the next point on the path with `ctx.moveTo()`.
+. Repeat the step above if you want to add more line segments in the path.
+. Draw a line on the canvas along the path by calling `ctx.stroke()`.
+
+[source,javascript]
+----
+const canvasElement = document.createElement('canvas')
+canvasElement.width = document.body.clientWidth
+canvasElement.height = document.body.clientHeight
+
+document.body.style.margin = '0px'
 document.body.appendChild(canvasElement)
 
 const ctx = canvasElement.getContext("2d")
 
-const drawSmugSmiley = (ctx, x, y, headRadius) => {
-  const glassRadius = headRadius / 3
+// Add a path to ctx
+ctx.beginPath()
+// Set the first point of the path
+ctx.moveTo(100, 100)
+// Connect the first point to (200, 200)
+ctx.lineTo(200, 200)
 
-  // Head
-  ctx.fillStyle = 'yellow'
+// Draw the path
+ctx.stroke()
+----
+
+image::line.png[]
+
+As an exercise, draw an arrow:
+
+[source,javascript, #first-arrow-on-canvas]
+----
+
+const ctx = canvasElement.getContext("2d")
+
+// Add a path to ctx
+ctx.beginPath()
+
+// Arrow shaft
+ctx.moveTo(100, 100)
+ctx.lineTo(200, 100)
+
+// Arrowhead
+ctx.moveTo(200, 100)
+ctx.lineTo(200 - 30, 100 - 30)
+ctx.moveTo(200, 100)
+ctx.lineTo(200 - 30, 100 + 30)
+
+// Stroke along the path
+ctx.stroke()
+----
+
+image::arrow.png[]
+
+=== Filling Polygons
+
+`ctx.closePath()` adds a line between the first point on the path and the last one. For example, the following path defines a rectangle:
+
+[source,javascript]
+----
+const ctx = canvasElement.getContext("2d")
+
+// Add a path to ctx
+ctx.beginPath()
+
+// Rectangle
+
+// Point to top-left corner
+ctx.moveTo(100, 100)
+// Continue to the top-right corner: top side
+ctx.lineTo(200, 100)
+// Continue to the bottom-right corner: right side
+ctx.lineTo(200, 200)
+// Continue to the bottom-left corner: bottom side
+ctx.lineTo(100, 200)
+// Return to the top-left corner: left side
+ctx.closePath()
+
+// Stroke along the path
+ctx.stroke()
+----
+
+image::rectangle-stroke.png[]
+
+This path forms a polygon, which can be filled with `ctx.fill()`. Simply replace `ctx.stroke()` with `ctx.fill()`:
+
+.Oh, a black box! Is it a function?
+image::rectangle-fill.png[]
+
+=== Drawing Circles and Arcs
+
+With paths, you can draw any imaginable shape, including circles. You _could_ achieve that by calculating evenly spaced coordinates on the circle, and drawing a path between them. For example, a circle with 10 such lines could look like:
+
+image::cirlce-polygon.png[]
+
+Conveniently though, `ctx` already provides a function for drawing circles, called `ctx.arc()`footnote:[https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc]. This function creates a path alongside an arch.
+
+Unlike `ctx.rect()`, `ctx.arc()` uses the first two arguments (stem:[x]- and stem:[y]-coordinates) to define the arc's center. The third argument is the length, and the final two arguments are the starting- and ending angles. Since a circle is just an arc that spans 360°, provide stem:[0] and stem:[2pi] as arguments.
+
+NOTE: All trigonometric functions in JavaScript uses radians--not degrees.
+
+[source,javascript]
+----
+const ctx = canvasElement.getContext("2d")
+
+// Add a path to ctx
+ctx.beginPath()
+// Circle
+ctx.arc(100, 100, 50, 0, 3.14159 * 2)
+// Stroke along the path
+ctx.stroke()
+----
+
+image::circle-stroke.png[]
+
+== Refactoring--Extraction
+
+_Refactoring_ is the process of restructuring code without changing its behavior. The main purpose of refactoring is to make the code easier to understand. This chapter will explore a key refactoring technique called _extraction_, which will help you scale your application.
+
+The code for <<first-arrow-on-canvas, drawing the arrow>> contains a lot of numbers--many of which are duplicates. Let's refactor the code so that it doesn't repeat the coordinates. The arrow stretches between two points; from the tip, to the base:
+
+[source,javascript]
+----
+const baseX = 100
+const baseY = 100
+
+const tipX = 200
+const tipY = 100
+----
+
+But the tip's coordinates could be derived from the base's, if only the length of the arrow is known:
+
+[source,javascript]
+----
+const baseX = 100
+const baseY = 100
+const length = 100
+
+const tipX = baseX + length
+const tipY = baseY
+----
+
+There's also the size arrowhead, which currently is offset stem:[30\ "px"] in both stem:[x]- and stem:[y]-direction. This corresponds to stem:[3/10] of the shaft's length:
+
+[source,javascript]
+----
+const arrowHeadSize = 3 / 10
+const arrowheadOffset = arrowHeadSize * length
+----
+
+Now, insert these constants into the <<first-arrow-on-canvas, arrow example>>:
+
+[source,javascript]
+----
+// Add a path to ctx
+ctx.beginPath()
+
+// Arrow shaft
+ctx.moveTo(baseX, baseY)
+ctx.lineTo(tipX, tipY)
+
+// Arrowhead
+ctx.moveTo(tipX, tipY)
+ctx.lineTo(tipX - arrowheadOffset, tipY - arrowheadOffset)
+ctx.moveTo(tipX, tipY)
+ctx.lineTo(tipX - arrowheadOffset, tipY + arrowheadOffset)
+
+// Stroke along the path
+ctx.stroke()
+----
+
+The final result looks the same, is a little bit longer, but is _significantly_ easier to understand.
+
+Now that the arrow derives all coordinates from just four arguments--`baseX`, `baseY`, `length`, and `arrowHeadSize`)--it becomes trivial to do even more refactoring.
+
+Extraction is a refactoring technique that involves moving pieces of code into a new function or procedure. That makes the extracted code reusable, and the original code becomes easier to comprehend.
+
+Before refactoring the code for drawing the arrow, let's consider a shorter example that calculates the Earth's gravitational force on its surface in accordance with Newton's law of universal gravitationfootnote:[https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation]:
+
+stem:[F=G{m_1m_2}/r^2]
+
+[source,javascript]
+----
+const gravitationalConstant = 6.674e-11
+// A person's weight
+const m1 = 100
+// Earth's mass
+const m2 = 5.9722e24
+// The distance to the earth's core
+const r = 6.378e6
+// Surface-level gravitational force on person of 100 kg
+const force = gravitationalConstant * m1 * m2 / (r ** 2)
+----
+
+TIP: Numbers can be written with scientific notation; for example, `3.14e-3`.
+
+If the calculation is moved to a return statement within a function, calling that function is equivalent:
+
+[source,javascript]
+----
+const earthForce = () => {
+  const gravitationalConstant = 6.674e-11
+  const m1 = 100
+  const m2 = 5.9722e24
+  const r = 6.378e6
+  // Surface-level gravitational force on person of 100 kg
+  return gravitationalConstant * m1 * m2 / (r ** 2)
+}
+const force = earthForce()
+----
+
+Finally, the extracted function can be made re-usable by moving some of the constants into function arguments:
+
+[source,javascript]
+----
+const earthForce = (mass) => {
+  const gravitationalConstant = 6.674e-11
+  const m2 = 5.9722e24
+  const r = 6.378e6
+  // Surface-level gravitational force on an object
+  return gravitationalConstant * mass * m2 / (r ** 2)
+}
+  // Surface-level gravitational force on person of 100 kg
+const force = earthForce(100)
+----
+
+It's easy to see how other values in the calculation can be _parameterized_ in the same way; for example `r`.
+
+From the previous <<first-arrow-on-canvas, example with the arrow>>, moved the code that draws the shape to a reusable function, and use this function to draw three arrows of different sizes:
+
+[source,javascript, #refactored-arrow-on-canvas]
+----
+
+const ctx = canvasElement.getContext("2d")
+
+const drawArrow = (baseX, baseY, length) => {
+  const tipX = baseX + length
+  const tipY = baseY
+
+  const arrowHeadSize = 3 / 10
+  const arrowheadOffset = arrowHeadSize * length
+
+  // Add a path to ctx
   ctx.beginPath()
-  ctx.arc(x, y, headRadius, 0, 2 * Math.PI)
-  ctx.fill()
 
-  // Glass and mouth color
-  ctx.fillStyle = 'black'
+  // Arrow shaft
+  ctx.moveTo(baseX, baseY)
+  ctx.lineTo(tipX, tipY)
 
-  // Left glass
-  ctx.beginPath()
-  ctx.arc(x - glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
-  ctx.fill()
+  // Arrowhead
+  ctx.moveTo(tipX, tipY)
+  ctx.lineTo(tipX - arrowheadOffset, tipY - arrowheadOffset)
+  ctx.moveTo(tipX, tipY)
+  ctx.lineTo(tipX - arrowheadOffset, tipY + arrowheadOffset)
 
-  // Right glass
-  ctx.beginPath()
-  ctx.arc(x + glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
-  ctx.fill()
-
-  // Smug smile
-  ctx.beginPath()
-  ctx.arc(x, y + headRadius / 5, 0.25 * headRadius, 0, Math.PI)
+  // Stroke along the path
   ctx.stroke()
 }
 
-drawSmugSmiley(ctx, 100, 100, 50)
+// Draw three arrows of different sizes
+drawArrow(ctx, 125, 50, 50)
+drawArrow(ctx, 100, 100, 100)
+drawArrow(ctx, 50, 200, 200)
 ----
 
-=== Animations
+image::canvas-arrow-x3.png[]
 
-=== Cover the screen
+NOTE: the `drawArrow()` can access `ctx` because it was declared after `ctx`. If `drawArrow` was declared in a separate file, it would also have to receive `ctx` as an argument.
 
+// === Drawing Exercise--Cool Smiley
+//
+// Let's practice some by drawing something cool:
+//
+// [source,javascript]
+// ----
+// const canvasElement = document.createElement('canvas')
+// document.body.appendChild(canvasElement)
+//
+// const ctx = canvasElement.getContext("2d")
+//
+// const drawSmugSmiley = (ctx, x, y, headRadius) => {
+//   const glassRadius = headRadius / 3
+//
+//   // Head
+//   ctx.fillStyle = 'yellow'
+//   ctx.beginPath()
+//   ctx.arc(x, y, headRadius, 0, 2 * Math.PI)
+//   ctx.fill()
+//
+//   // Glass and mouth color
+//   ctx.fillStyle = 'black'
+//
+//   // Left glass
+//   ctx.beginPath()
+//   ctx.arc(x - glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
+//   ctx.fill()
+//
+//   // Right glass
+//   ctx.beginPath()
+//   ctx.arc(x + glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
+//   ctx.fill()
+//
+//   // Smug smile
+//   ctx.beginPath()
+//   ctx.arc(x, y + headRadius / 5, 0.25 * headRadius, 0, Math.PI)
+//   ctx.stroke()
+// }
+//
+// drawSmugSmiley(ctx, 100, 100, 50)
+// ----
+
+== Animations
+
+== Interactivity--Controls
+
+== Vectors
+=== Addition
+=== Subtraction--Distances
+=== Scaling
+=== Magnitude--Length
+=== Normalization
+
+== Camera
+
+== Transformations
+=== Translation
+=== Transformations
+=== Rotation
+=== Matrices
+=== Canvas Transform
+
+=== Responsive Dimensions
 
 
 == Exercises
