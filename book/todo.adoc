@@ -1,0 +1,19 @@
+= TODO
+
+Not yet sure where to put these topics:
+
+- Mutation
+- Draw image
+- Play Sound
+- Resizing
+- Split screen
+- Restart game
+- Publishing
+
+- Starter project
+  - Allow top-level `await`: `build: {target: 'esnext'}`
+
+Consider including these:
+
+- World generation--big topic though.
+- Online multiplayer--tough one

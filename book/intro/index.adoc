@@ -1125,14 +1125,29 @@ NOTE: the `drawArrow()` can access `ctx` because it was declared after `ctx`. If
 
 == Interactivity--Controls
 
+== First Game--
+
+== Compiled JavaScript
+=== Initialize Projects With Vite
+=== Build Pipeline
+=== Modules
+=== Prettier
+=== ESLint
+
+== TypeScript
+
 == Vectors
 === Addition
 === Subtraction--Distances
 === Scaling
-=== Magnitude--Length
-=== Normalization
+=== Magnitudes--Lengths
+=== Normals--Directions
 
-== Camera
+== Physics Game--Hunting Dot
+=== Direction
+=== Collision
+
+== Camera Game--
 
 == Transformations
 === Translation
@@ -1141,9 +1156,10 @@ NOTE: the `drawArrow()` can access `ctx` because it was declared after `ctx`. If
 === Matrices
 === Canvas Transform
 
-=== Responsive Dimensions
-
+== Appendix
+=== Publish on the Internet
 
 == Exercises
 
 // TODO exercise: camelCase()
+
