@@ -219,6 +219,7 @@ When in doubt, use parenthesis to make the code easy to read:
 console.log((4 / 3) / 2)
 ----
 
+[#identifiers]
 === Identifiers and constants (`const`)
 
 Imagine that two forces are applied to an object with a known mass; then you can calculate the force as such:
@@ -263,7 +264,7 @@ The identifiers adhere to a special naming convention called `camelCase`footnote
 
 NOTE: there are other popular naming conventions; for example, Pascal case (`ForceEngine`), kebab case (`force-engine`), and snake case (`snake-case`). They work under different circumstances and have different popularity in different programming languages. For example, kebab case is popular for URLs (including file names), but does not work in JavaScript, where the hyphen (`-`) would be interpreted as a subtraction operator. Pascal case works in JavaScript, but is only used in special circumstances which are covered further down the road in this book.
 
-=== Errors
+=== Runtime Errors
 
 Execute the following statement:
 
@@ -712,7 +713,9 @@ _Et voilà!_
 
 image::html-canvas-rectangle.png[]
 
-The `getContext()` functionfootnote:[https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext] returns an object that lets us draw shapes on the canvas. One of these functions is `fillRect()`footnote:[https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect], which draws a rectangle on the screen. The first two argument it takes are the stem:[x]- and stem:[y]- coordinates of the rectangle's upper left corner. The last two coordinates are the width and heights.
+The `getContext()` functionfootnote:[https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext] returns an object that lets you draw shapes on the canvas. This object is assigned to a constant `ctx`, so that it can be referenced again. One of these functions is `fillRect()`footnote:[https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect], which draws a rectangle on the screen. The first two argument it takes are the stem:[x]- and stem:[y]- coordinates of the rectangle's upper left corner. The last two coordinates are the width and heights.
+
+NOTE: The name `ctx` is just an arbitrary name; it could have been named `context` or anything else.
 
 === Computer Graphics Coordinate Systems
 
@@ -838,7 +841,27 @@ ctx.stroke()
 
 image::line.png[]
 
-As an exercise, draw an arrow:
+// TODO change color
+
+You can change the color and thickness with `strokeStyle` and `lineWidth` respectively:
+
+[source,javascript]
+----
+const ctx = canvasElement.getContext("2d")
+
+ctx.beginPath()
+ctx.moveTo(100, 100)
+ctx.lineTo(200, 200)
+
+ctx.lineWidth = 14;
+ctx.strokeStyle = "green";
+ctx.stroke()
+----
+
+.A thick, green line.
+image::line-thick-colored.png[]
+
+As an exercise, draw a colored arrow:
 
 [source,javascript, #first-arrow-on-canvas]
 ----
@@ -896,8 +919,26 @@ image::rectangle-stroke.png[]
 
 This path forms a polygon, which can be filled with `ctx.fill()`. Simply replace `ctx.stroke()` with `ctx.fill()`:
 
-.Oh, a black box! Is it a function?
+
+[source,javascript]
+----
+// Instead of ctx.stroke()
+ctx.fill()
+----
+
+.Oh, a black box... Is it a function?
 image::rectangle-fill.png[]
+
+Change the color with `fillStyle` (note that this property is distinct from `strokeStyle`):
+
+[source,javascript]
+----
+ctx.fillStyle = 'blue'
+ctx.fill()
+----
+
+.A blue box
+image::rectangle-blue.png[]
 
 === Drawing Circles and Arcs
 
@@ -1038,7 +1079,7 @@ const force = earthForce(100)
 
 It's easy to see how other values in the calculation can be _parameterized_ in the same way; for example `r`.
 
-From the previous <<first-arrow-on-canvas, example with the arrow>>, moved the code that draws the shape to a reusable function, and use this function to draw three arrows of different sizes:
+Take the <<first-arrow-on-canvas, example with the arrow>>, and move the code that draws the path to a reusable function.
 
 [source,javascript, #refactored-arrow-on-canvas]
 ----
@@ -1068,60 +1109,299 @@ const drawArrow = (baseX, baseY, length) => {
   // Stroke along the path
   ctx.stroke()
 }
+----
 
+NOTE: the `drawArrow()` can access `ctx` because it was declared after `ctx`. If `drawArrow` was declared in a separate file, it would also have to receive `ctx` as an argument.
+
+Use this function to draw three arrows of different sizes:
+
+[source,javascript]
+----
 // Draw three arrows of different sizes
-drawArrow(ctx, 125, 50, 50)
-drawArrow(ctx, 100, 100, 100)
-drawArrow(ctx, 50, 200, 200)
+drawArrow(125, 50, 50)
+drawArrow(100, 100, 100)
+drawArrow(50, 200, 200)
 ----
 
 image::canvas-arrow-x3.png[]
 
-NOTE: the `drawArrow()` can access `ctx` because it was declared after `ctx`. If `drawArrow` was declared in a separate file, it would also have to receive `ctx` as an argument.
-
-// === Drawing Exercise--Cool Smiley
-//
-// Let's practice some by drawing something cool:
-//
-// [source,javascript]
-// ----
-// const canvasElement = document.createElement('canvas')
-// document.body.appendChild(canvasElement)
-//
-// const ctx = canvasElement.getContext("2d")
-//
-// const drawSmugSmiley = (ctx, x, y, headRadius) => {
-//   const glassRadius = headRadius / 3
-//
-//   // Head
-//   ctx.fillStyle = 'yellow'
-//   ctx.beginPath()
-//   ctx.arc(x, y, headRadius, 0, 2 * Math.PI)
-//   ctx.fill()
-//
-//   // Glass and mouth color
-//   ctx.fillStyle = 'black'
-//
-//   // Left glass
-//   ctx.beginPath()
-//   ctx.arc(x - glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
-//   ctx.fill()
-//
-//   // Right glass
-//   ctx.beginPath()
-//   ctx.arc(x + glassRadius, y - glassRadius, glassRadius, 0, Math.PI)
-//   ctx.fill()
-//
-//   // Smug smile
-//   ctx.beginPath()
-//   ctx.arc(x, y + headRadius / 5, 0.25 * headRadius, 0, Math.PI)
-//   ctx.stroke()
-// }
-//
-// drawSmugSmiley(ctx, 100, 100, 50)
-// ----
-
 == Animations
+
+To make objects move on the screen, a computer draws a series of still images one-by-one on the screen over time. Drawing them in rapid succession--at least 30 times per second--gives the illusion of continuous motion. Each still image is called a _frame_.
+
+TIP: The term _frame per second_ (stem:[fps]) comes from the word frame in this context.
+
+You task in this chapter is to crate a circle that moves across the screen.
+
+=== Animation Loop
+
+The objective is to draw a rapid succession of still images. The algorithm looks something like:
+
+1. Draw still image
+2. Wait a fraction of a second
+3. Repeat step #1
+
+It's easy to imagine a function that would delay the execution for a whole (step #2), but how can a program repeat itself?
+
+Create a function `update` that prints the current time with `Date()`.
+
+[source,javascript]
+----
+const update = () => {
+  console.log(Date())
+}
+----
+
+Then call `setInterval`:
+
+[source,javascript]
+----
+const update = () => {
+  console.log(Date())
+}
+setInterval(update, 1000)
+----
+
+At first, it might look strange that a function is being passed as an argument to another function, but this is technique that actually is very useful.
+
+`setInterval` creates a timer that calls the function in the same argument repeatedly, with some delay. The second argument determines how long the period is in milliseconds. In the example above, `updates` gets called once per second for eternity, which means that you will see the current time getting printed out to the console every second.
+
+=== Mutation (Change)
+
+Since the task is to create a circle that is moving across the screen, you are going to need to calculate a new coordinate every few milliseconds. But so far, each example has either demonstrated static images or `console.log()` statements that always prints out the same result. Apart from the timer, nothing has ever really _changed_ once the website has loaded. In programming, _change_ is more often than not referred to as _mutation_.
+
+Consider a constant:
+
+[source,javascript]
+----
+// Start position is at 0
+const positionX = 0
+----
+
+The word `const` implies that the position is constant; that is, it never changes. You can see it as a mathematical equation:
+
+stem:[x = 0]
+
+An equation is a statement that the two expressions on either side are equal--there is no way to change stem:[x].
+
+In an expression such as this:
+
+[source,javascript]
+----
+console.log(10 + 2)
+----
+
+`10` and `2` are values, but after they have gone into the `+` operator, there is no way to refer to them again. Constants are a way to refer to values by a name--an identifier.
+
+The `let` keyword, however, is an alternative to `const` that creates a _variable_. A variable, as the name implies, lets you change the value that it refers to:
+
+[source,javascript]
+----
+let positionX = 0
+// Prints 0
+console.log(positionX)
+
+position = 10
+// Prints 10
+console.log(positionX)
+----
+
+When you create a variable, you must write `let` before the name. After that, you can _assign_ new values with the _assignment operator_ (`=`).
+
+NOTE: Confusingly, there is also a `var` keyword for variables. It gets easier if you completely avoid using this keyword because it has some nuances to it. However, there is a lot of older JavaScript examples our there that does use it, so now you know.
+
+The following yields a syntax error because it attempts to reassign a constant:
+
+[source,javascript]
+----
+const positionX = 0
+// Syntax error ❌
+positionX = 10
+----
+
+You must not write `let` again before the variable name:
+
+[source,javascript]
+----
+let positionX = 0
+// Syntax error ❌
+let positionX = 10
+----
+
+It's common to use the variable name on both sides of the assignment operator (`=`):
+
+[source,javascript]
+----
+let positionX = 10
+positionX = positionX + 20
+// Prints 30
+console.log(positionX)
+----
+
+How it works:
+
+1. The expression on the right hand side of the assigment operator (`=`) is calculated. At this point in time, `positionX` is `10`, so the result of the addition is `30`.
+2. The value from the expression on the right hand side is assigned to the variable on the left side. `positionX` is reassigned to the value `30`.
+
+=== Animating
+
+With `setInterval` and variables (`let`) as new tools in your tool belt, print out an ever moving target:
+
+[source,javascript]
+----
+// Start position
+let positionX = 100
+const update = () => {
+  positionX = positionX + 1
+  console.log(positionX)
+}
+setInterval(update, 1000)
+----
+
+This prints
+
+[source]
+----
+101
+102
+103
+104
+105
+----
+
+And so on... once per second until the end of time.
+
+Instead of printing out a boring number, let's use it as a coordinate when drawing out a circle:
+
+[source,javascript]
+----
+const ctx = canvasElement.getContext("2d")
+
+let positionX = 0
+
+const update = () => {
+  positionX = positionX + 100
+
+  ctx.beginPath()
+  ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
+  ctx.fill()
+}
+setInterval(update, 1000)
+----
+
+image::stepping-dot.png[]
+
+That hardly counts as an animation! The dot is not moving smoothly, but jumps from position to position. And when a dot is drawn out, the previous dots are kept on the canvas.
+
+The fix is simply to
+
+1. Reduce the delay--the second argument in `setInterval`.
+2. Before drawing a frame, paint over the previous one with the background color.
+
+[source,javascript]
+----
+const ctx = canvasElement.getContext("2d")
+
+let positionX = 0
+
+const update = () => {
+  positionX = positionX + 2
+
+  // Clear the canvas
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0, 0, canvasElement.width, canvasElement.height)
+
+  // Draw circle
+  ctx.beginPath()
+  ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
+  ctx.fillStyle = 'black'
+  ctx.fill()
+}
+setInterval(update, 1000 / 60)
+----
+
+=== Refactor--Units of Measurement
+
+One obvious flaw with the code is that the game will speed up or slow down if you change the delay between each frame.
+
+.A change like this would mean that the `2` would have to be replaced with a `4`. Imagine such a change in a larger code base, with hundreds of such values.
+[source,javascript]
+----
+// This causes the entire game to slow down by 50%.
+setInterval(update, 1000 / 30)
+----
+
+Let's be more explicit with the units in the calculation. A frame rate of 60 fps means that the time between each frame is stem:[1/60] second.
+
+[source,javascript]
+----
+const fps = 60
+const dt = 1 / fps
+----
+
+`dt` stands for _delta time_; that is, the time difference between each frame. To calculate the _delta distance_--the number of pixels that the circle is moving each frame--multiply the delta time with the velocity:
+
+[source,javascript]
+----
+const ctx = canvasElement.getContext("2d")
+
+const fps = 60
+const dt = 1 / fps
+
+let positionX = 0
+// 50 pixels per second
+const velocityX = 50
+
+const update = () => {
+  positionX = positionX + velocityX * dt
+
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0, 0, canvasElement.width, canvasElement.height)
+
+  ctx.beginPath()
+  ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
+  ctx.fillStyle = 'black'
+  ctx.fill()
+}
+setInterval(update, 1000 * dt)
+----
+
+Now, you can decrease the framerate without affecting the speed by which the circle is moving.
+
+=== Refactor--Dynamic Frame Rate
+
+If you've played video games, you must have noticed that the frame rate is not a constant number, but that during heavy calculations, it tends to drop. In the previous section, the delta distance time (`dt`) was calculated from a _desired_ frame rate, so that the velocity of the circle would be the same regardless of the frame rate. But there is no guarantee that the computer will actually be able to catch up with the frame rate that you set. Set the frame rate to 1000 and notice how the entire game slows down, despite the effort. This means that the delta time must be calculated dynamically--once for each frame.
+
+[source,javascript]
+----
+
+
+const ctx = canvasElement.getContext("2d")
+
+let positionX = 0
+// 50 pixels per second
+const velocityX = 50
+
+let then = 0
+const update = (now) => {
+  const dt = (now - then) / 1000
+  then = now
+
+  positionX = positionX + velocityX * dt
+
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0, 0, canvasElement.width, canvasElement.height)
+
+  ctx.beginPath()
+  ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
+  ctx.fillStyle = 'black'
+  ctx.fill()
+
+  requestAnimationFrame(update)
+}
+
+requestAnimationFrame(update)
+----
 
 == Interactivity--Controls
 

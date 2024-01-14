@@ -9,6 +9,11 @@ Not yet sure where to put these topics:
 - Split screen
 - Restart game
 - Publishing
+- `requestAnimationFrame`
+- Syntax error
+- Runtime errors
+- Expressions and statements
+- Hex colors
 
 - Starter project
   - Allow top-level `await`: `build: {target: 'esnext'}`
