@@ -352,17 +352,7 @@ A procedure can be _called_, which means that the code within curly braces (`{}`
 }
 ----
 
-However, if you simply include this in your `<script>`, nothing will happen. That is because you defined the procedure, but you never _called_ it. The statement above doesn't do anything with the values. If you write:
-
-[source,javascript]
-----
-'hello'
-123
-----
-
-Your program first creates a string value `'hello'`, then a numeric value `123`, but it does not do anything with them. Similarly, the procedure `() => { console.log('Hello, procedure!') }` is just a value.
-
-To call it, you first need an identifier that references the procedure. Then, write the name of the identifier followed by parentheses (`()`):
+However, if you simply include this in `main.js`, nothing will happen. That is because you defined the procedure, but you never _called_ it. To call a procedure is to run the code within it. The statement above defines a code snipped that will run, but it never executes it. To call it, you first need an identifier that references the procedure. Then, write the name of the identifier followed by parentheses (`()`):
 
 [source,js]
 ----
@@ -387,6 +377,22 @@ greet()
 greet()
 greet()
 greet()
+----
+
+
+The name `greet` is just a way to refer to the value on the right hand side of the equals sign (`=`). You can assign the same procedure to multiple identifiers; for example, this prints the same string twice:
+
+[source,javascript]
+----
+// Define the procedure
+const greet = () => {
+  console.log('Hello, procedure!')
+}
+// greet2 refers to the same procedure as greet
+const greet2 = greet
+// Call the same procedure twice
+greet()
+greet2()
 ----
 
 === Block Scope
@@ -1143,11 +1149,11 @@ The objective is to draw a rapid succession of still images. The algorithm looks
 
 It's easy to imagine a function that would delay the execution for a whole (step #2), but how can a program repeat itself?
 
-Create a function `update` that prints the current time with `Date()`.
+Create a function `loop` that prints the current time with `Date()`.
 
 [source,javascript]
 ----
-const update = () => {
+const loop = () => {
   console.log(Date())
 }
 ----
@@ -1156,15 +1162,15 @@ Then call `setInterval`:
 
 [source,javascript]
 ----
-const update = () => {
+const loop = () => {
   console.log(Date())
 }
-setInterval(update, 1000)
+setInterval(loop, 1000)
 ----
 
-At first, it might look strange that a function is being passed as an argument to another function, but this is technique that actually is very useful.
+Note that `loop` is written without parentheses. `setInterval` receives a reference to the procedure, which it will call repeatedly with regular intervals. If you called `loop` before passing it in, `setInterval` would not receive a reference to the procedure, but the value that the procedure returns. Since procedures do not return values, this would result in an error.
 
-`setInterval` creates a timer that calls the function in the same argument repeatedly, with some delay. The second argument determines how long the period is in milliseconds. In the example above, `updates` gets called once per second for eternity, which means that you will see the current time getting printed out to the console every second.
+The second argument determines how long the period is in milliseconds. In the example above, `loop` gets called once per second for eternity, which means that you will see the current time getting printed out to the console every second.
 
 === Mutation (Change)
 
@@ -1245,20 +1251,20 @@ How it works:
 
 === Animating
 
-With `setInterval` and variables (`let`) as new tools in your tool belt, print out an ever moving target:
+With `setInterval` and variables (`let`) as new tools in your tool belt, print out the x-coordinate for a target that is moving in the right direction:
 
 [source,javascript]
 ----
 // Start position
 let positionX = 100
-const update = () => {
+const loop = () => {
   positionX = positionX + 1
   console.log(positionX)
 }
-setInterval(update, 1000)
+setInterval(loop, 1000)
 ----
 
-This prints
+The output in the console will look like:
 
 [source]
 ----
@@ -1279,14 +1285,14 @@ const ctx = canvasElement.getContext("2d")
 
 let positionX = 0
 
-const update = () => {
+const loop = () => {
   positionX = positionX + 100
 
   ctx.beginPath()
   ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
   ctx.fill()
 }
-setInterval(update, 1000)
+setInterval(loop, 1000)
 ----
 
 image::stepping-dot.png[]
@@ -1304,7 +1310,7 @@ const ctx = canvasElement.getContext("2d")
 
 let positionX = 0
 
-const update = () => {
+const loop = () => {
   positionX = positionX + 2
 
   // Clear the canvas
@@ -1317,18 +1323,69 @@ const update = () => {
   ctx.fillStyle = 'black'
   ctx.fill()
 }
-setInterval(update, 1000 / 60)
+setInterval(loop, 1000 / 60)
 ----
 
-=== Refactor--Units of Measurement
+=== Refactoring--Single Responsibility Principle
 
-One obvious flaw with the code is that the game will speed up or slow down if you change the delay between each frame.
+The `loop` function does two things:
 
-.A change like this would mean that the `2` would have to be replaced with a `4`. Imagine such a change in a larger code base, with hundreds of such values.
+1. Runs the next step in the game world simulation. At the moment, this entails just the stem:[x]-coordinate of a moving circle, but there will be more to come.
+2. Draws the world on the screen.
+
+At the moment, the code is ok, but as the program grows, it will become increasingly difficult to keep track of all the lines of code. A good practice is to identify when a procedure does more than one thing, and to divide that into sub-procedures. This is called the _single responsibility principle_footnote:[https://en.wikipedia.org/wiki/Single_responsibility_principle].
+
+Let's put that in practice by <<_refactoring_extraction, _extracting_>> the parts that handles the 1) and 2):
+
 [source,javascript]
 ----
+const ctx = canvasElement.getContext("2d")
+
+let positionX = 0
+
+// Update game world physics
+const update = () => {
+  positionX = positionX + 2
+}
+
+// Draw the game world
+const render = () => {
+  // Clear the canvas
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0, 0, canvasElement.width, canvasElement.height)
+
+  // Draw circle
+  ctx.beginPath()
+  ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
+  ctx.fillStyle = 'black'
+  ctx.fill()
+}
+
+const loop = () => {
+  update()
+  render()
+}
+
+
+setInterval(loop, 1000 / 60)
+----
+
+To be perfectly clear: this is totally overkill at the moment, but this will be useful very soon as the program grows.
+
+=== Units of Measurement
+
+One obvious flaw with the code is that the game will speed up or slow down if you change the delay between each frame. For example, by decreasing the frame rate from 60 fps to 30 fps, the entire game will slow down by a factor of stem:[0.5].
+
+.By halving the frame rate, the `2` in the example would have to be replaced with a `4`; otherwise, the animation would slow down. Imagine such a change in a larger code base, with hundreds of such values.
+[source,javascript]
+----
+// Update game world physics
+const update = () => {
+  positionX = positionX + 2
+}
+
 // This causes the entire game to slow down by 50%.
-setInterval(update, 1000 / 30)
+setInterval(loop, 1000 / 30)
 ----
 
 Let's be more explicit with the units in the calculation. A frame rate of 60 fps means that the time between each frame is stem:[1/60] second.
@@ -1354,38 +1411,117 @@ const velocityX = 50
 
 const update = () => {
   positionX = positionX + velocityX * dt
-
-  ctx.fillStyle = 'white'
-  ctx.fillRect(0, 0, canvasElement.width, canvasElement.height)
-
-  ctx.beginPath()
-  ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
-  ctx.fillStyle = 'black'
-  ctx.fill()
 }
-setInterval(update, 1000 * dt)
 ----
 
 Now, you can decrease the framerate without affecting the speed by which the circle is moving.
 
-=== Refactor--Dynamic Frame Rate
+=== Measuring Frame Rate
 
-If you've played video games, you must have noticed that the frame rate is not a constant number, but that during heavy calculations, it tends to drop. In the previous section, the delta distance time (`dt`) was calculated from a _desired_ frame rate, so that the velocity of the circle would be the same regardless of the frame rate. But there is no guarantee that the computer will actually be able to catch up with the frame rate that you set. Set the frame rate to 1000 and notice how the entire game slows down, despite the effort. This means that the delta time must be calculated dynamically--once for each frame.
+If you've played video games, you must have noticed that the frame rate is _not_ a constant number, but that during heavy calculations, it tends to drop. In the previous section, the delta time (`dt`) was calculated from a _desired_ frame rate, so that the velocity of the circle was the same regardless of the frame rate. But there is no guarantee that the computer will be able to deliver the frame rate that you set. For a concrete example, try yourself to set the frame rate to `1000` and see what happens: despite the effort in the previous section to create a constant speed, the game slows down because JavaScript's `setInterval` can not handle very short intervalsfootnote:[https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#reasons_for_delays_longer_than_specified].
+
+The solution is to calculate the delta time (`dt`) for each frame based on the actual time that elapsed:
+
+stem:[dt = t_"now" - t_"then"]
+
+Where does stem:[t_"now"] and stem:[t_"then"] come from? The function  `performance.now()` gives the number of milliseconds since the web page was loaded. For example, this is how you can measure the time it takes to perform a certain computation:
+
+.An example of how to measure time. Note that `performance.now()` has a precision of microseconds, but none of the programs that you have written so far takes more than a microsecond to execute, which means that `dt` will become 0. Modern processors are fast!
+[source,javascript]
+----
+const timeThen = performance.now()
+// Peform some computation here
+doSomething()
+const timeNow = performance.now()
+const dt = (timeNow - timeThen) / 1000
+----
+
+When the program starts, save the time from `performance.now()` in a variable, `timeThen`:
 
 [source,javascript]
 ----
+let timeThen = performance.now()
 
+const update = () => {
+  positionX = positionX + velocityX * dt
+}
+----
 
+For each frame (in `update()`), calculate the current time with `performance.now()`, and call it `timeNow`. Now you can calculate the time that elapsed since the program started:
+
+[source,javascript]
+----
+let timeThen = performance.now()
+
+const update = () => {
+  const timeNow = performance.now()
+  console.log(`Time since the program started: ${timeNow - timeThen} ms`)
+  positionX = positionX + velocityX * dt
+}
+----
+
+If you set assign the value in `timeNow` to `timeThen`, at the beginning of the next frame, `timeThen` will contain the time stamp of the previous frame. This means that `dt` can be calculated by just subtracting `timeThen` from `timeNow`:
+
+[source,javascript]
+----
+// Initialize timeThen to the time when the program started
+let timeThen = performance.now()
+
+const update = () => {
+  // timeNow contains the timestamp for the current frame
+  const timeNow = performance.now()
+  // timeThen contains the timestamp for the previous frame
+  const dt = (timeNow - timeThen) / 1000
+  // Put the current time stamp in the variable, so that we can calculate dt again next frame
+  timeThen = timeNow
+
+  positionX = positionX + velocityX * dt
+}
+----
+
+With this in place, try to set `fps` to `1000`: you won't actually get `1000` frames per second, but the animation won't slow down.
+
+=== Optimized Frame Rate
+
+According to the HTMl specification, `setInterval` has a minimum delay of 4 msfootnote:[https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#reasons_for_delays_longer_than_specified]:
+
+> As specified in the HTML standard, browsers will enforce a minimum timeout of 4 milliseconds once a nested call to setTimeout has been scheduled 5 times.
+
+This means that the 5 first time, `dt` can be as little as `0`, but after that, the delta time will be capped to at least 4 ms. This means that you can achieve a frame rate of up to 250 Hz with `setInterval`. But very few monitors can deliver a frame rate that high. For example, a computer with a 60 Hz monitor would be calculating 190 frames that would never be rendered on the screen.
+
+Instead of scheduling updates with `setInterval`, it's better to ask the computer when it's suitable to draw the next frame. `requestAnimationFrame()` expects a callback function (`loop`) as an argument, which will be called when the next frame is ready to be drawn. This is similar to `setInterval`, but unlike it, `requestAnimationFrame` does not call the callback function repeatedly. Instead, after each frame has been drawn, you need to manually request the next frame by calling `requestAnimationFrame` again:
+
+[source,javascript]
+----
+const loop = () => {
+  update()
+  render()
+  // Schedule the next frame
+  requestAnimationFrame(loop)
+}
+
+// Schedule the first frame
+requestAnimationFrame(loop)
+----
+
+=== Final Result
+
+The final program looks like this:
+
+[source,javascript]
+----
 const ctx = canvasElement.getContext("2d")
 
 let positionX = 0
-// 50 pixels per second
 const velocityX = 50
 
-let then = 0
-const update = (now) => {
-  const dt = (now - then) / 1000
-  then = now
+// The game starts at t=0
+let timeThen = 0
+
+// `now` is a number, measured in milliseconds
+const update = (timeNow) => {
+  const dt = (timeNow - timeThen) / 1000
+  timeThen = timeNow
 
   positionX = positionX + velocityX * dt
 
@@ -1397,9 +1533,11 @@ const update = (now) => {
   ctx.fillStyle = 'black'
   ctx.fill()
 
+  // Schedule the next frame
   requestAnimationFrame(update)
 }
 
+// Schedule the first frame
 requestAnimationFrame(update)
 ----
 
@@ -1443,3 +1581,5 @@ requestAnimationFrame(update)
 
 // TODO exercise: camelCase()
 
+[index]
+== Index
