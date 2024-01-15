@@ -1504,27 +1504,50 @@ const loop = () => {
 requestAnimationFrame(loop)
 ----
 
+=== Minimum delta time
+
+Try the following:
+
+1. Reload the page. The circle will be on the left side of the screen.
+2. Immediately switch to a different browser tab.
+3. Wait five seconds.
+4. Switch back to the tab again.
+
+You will notice how the entire game ju
+
+// TODO complete this section and move it
+
 === Final Result
 
 The final program looks like this:
 
 [source,javascript]
 ----
+const canvasElement = document.createElement('canvas')
+canvasElement.width = document.body.clientWidth
+canvasElement.height = document.body.clientHeight
+
+document.body.style.margin = '0px'
+document.body.appendChild(canvasElement)
+
 const ctx = canvasElement.getContext("2d")
 
 let positionX = 0
-const velocityX = 50
+// 50 pixels per second
+const velocityX = 100
 
-// The game starts at t=0
-let timeThen = 0
 
-// `now` is a number, measured in milliseconds
-const update = (timeNow) => {
+let timeThen = performance.now()
+
+const update = () => {
+  const timeNow = performance.now()
   const dt = (timeNow - timeThen) / 1000
   timeThen = timeNow
 
   positionX = positionX + velocityX * dt
+}
 
+const render = () => {
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, canvasElement.width, canvasElement.height)
 
@@ -1532,13 +1555,14 @@ const update = (timeNow) => {
   ctx.arc(positionX, 100, 50, 0, 2 * Math.PI)
   ctx.fillStyle = 'black'
   ctx.fill()
-
-  // Schedule the next frame
-  requestAnimationFrame(update)
 }
 
-// Schedule the first frame
-requestAnimationFrame(update)
+const loop = () => {
+  update()
+  render()
+  requestAnimationFrame(loop)
+}
+requestAnimationFrame(loop)
 ----
 
 == Interactivity--Controls
