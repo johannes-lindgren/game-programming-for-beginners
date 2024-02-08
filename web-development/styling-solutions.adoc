@@ -291,9 +291,10 @@ So Emotion brings us back the ergonomics that the `style` attribute initially ga
 
 == Summary
 
-In summary
+In conclusion:
 
 - The `style` attribute is ergonomic, but has performance penalties.
-- CSS is performant, but has global scope which results in spaghetti code. BEM is a naming convention that helps to avoid naming conflicts, but does not encapsulate styles.
+- CSS is performant, but has global scope which results in spaghetti code.
+- BEM is a naming convention that helps to avoid naming conflicts, but does not encapsulate styles.
 - CSS modules solves the problem of global scope, but still requires boilerplate and does not co-locate the styles with the component.
 - Styled components and Emotion brings us back the ergonomics that the `style` attribute initially gave us, but with the added performance benefits that we initially sought out with CSS. Though, it adds some runtime overhead, due to the CSS being generated at runtime.
