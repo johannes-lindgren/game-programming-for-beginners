@@ -99,7 +99,7 @@ In this sense, we can understand TypeScript more as a powerful linter, rather th
 
 With the constraints in mind, we can also understand TypeScript as _subset_ of JavaScript. While some claim TypeScript to be a _superset_ of JavaScript, I'd argue otherwise. If anything, I think it is _JavaScript_ that is a superset of TypeScript. Consider all JavaScript and TypeScript programs there is: if you take a random JavaScript program sample, there is only a slim chance that it passes the checks by TypeScript. But take (almost) any TypeScript program, strip away the type annotation, and you'd have a valid JavaScript program. In this sense, TypeScrip is a _subset_ of JavaScript.
 
-== Type annotation
+== Types
 
 In JavaScript we deal exclusively with values:
 
@@ -112,7 +112,7 @@ A value is something that can be stored in memory while the program is running. 
 
 In TypeScript we also consider the _set of values_ that our variables can reference; this is called a _type_. A type is like a set in that it consistes of a collection values. The identifiers of types start with uppercase. For example, we could construct a set `Digit` that contains the numbers 0–9:
 
-![image](https://gist.github.com/assets/14206504/ab03a3cd-322e-41cd-9d75-6226a1996cf7)
+// TODO
 
 We can now annotate a value `digit` with the type `Digit` to tell TypeScript that whatever value is in `digit`, it must be one of the values in `Digit`:
 
@@ -121,68 +121,96 @@ We can now annotate a value `digit` with the type `Digit` to tell TypeScript tha
 const digit: Digit = 5
 ----
 
-If you assign a value that is not in the annotated type, TypeScript will generatea compile-time error:
+If you assign a value that is not in the annotated type, TypeScript will generate compile-time error:
 
 [source,typescript]
 ----
 const digit: Digit = 10
 ----
 
-To define a type, use the following notation:
-
-[source,typescript]
-----
-type Digit = // type definition here
-----
-
-where the right hand side of the equal `=` sign defines the set of values that `Age` refers to. `Digit` is also said to be a type alias.
-
-Note that you can still run the program. This is because TypeScript code is compiled, all type aliases and type annotations are removed. This is what the compiled output looks like:
+Note that you can still run the program. This is because when TypeScript code is compiled, all type annotations are removed. This is what the compiled output looks like:
 
 [source,js]
 ----
 const digit = 10
 ----
 
-== Literal/value types
+== Primitive Types
+
+// TODO paragraph
+
+=== Literal/value types
 
 The most primitive kind of type is a type literal:
 
 [source,typescript]
 ----
-type False = false
-const onePlusOneEqualsThree: False = false
+const nothing: undefined = undefined
 ----
 
-This just tells us that `onePlusOneEqualsThree` can only ever have one value.
+This just tells us that `nothing` can only ever have one value: `undefined`. Note that the occurrence of `undefined` between the `:` and `=` symbols is actually a type and not a value. For each literal value, there exists a corresponding type with the same name.
 
-On the first line, `false` is actually a type. When a literal is used as a type rather than a value, the type is the set that only contains that one value:
+> For each literal value, there exists a corresponding type with the same name.
 
-![image](https://gist.github.com/assets/14206504/611819ad-e0c4-4ebf-b3a8-c62978e37517)
+So the symbols `undefined`, `true`, `false`, `123`, `"hello"`, and even `[1,2,3]` and `{ a: 'a' }` can be either values or types depending on where in the syntax tree they appear. For example, if a literal appears directly after an assigment operator (`=`), it is a value; but if it appears after the colons (`:`) after a variable declaration, it is a type.
 
-Similarly a type like
+.The black label denotes the name of the type, and the grey labels denotes the values in the type.
+// TODO
+
+=== Sum/Union Types
+
+Value types are not very interesting on their own--they get much more interesting when they're combined into larger types. Consider the two types `true` and `false`:
+
+// TODO
+
+Like other strongly typed functional programming languages, TypeScript has _type operators_ that let you combine types in different ways. One of these operators is the _type union operator_ `|`, which lets you combine two types into a new types that contains all values from both operands:
+
+// TODO
+
+In TypeScript, this can be written as such:
 
 [source,typescript]
 ----
-type True = true
+const amIHappy: true | false = true
 ----
 
-Can be visualised as:
+The expression `true | false` can be read as "true or false", and is only evaluated at compile-time by the type checker.
 
-![image](https://gist.github.com/assets/14206504/10b2ad5d-542f-41c7-b5df-b4a4dbbc41e0)
+=== The `boolean` type
 
-== Union types: boolean (sum types)
+The type `true | false` is such a common occurrence that TypeScript has a built-in type for it; called `boolean`:
 
-Value type are not very interesting on theur own—it gets more interesting when conisdering _unions_ of these types. The most primitive type is the `boolean` type, because it only contains one bit of information--the smallest piece of information possible.
+[source,typescript]
+----
+const amIHappy: boolean = true
+----
 
-We can define our boolean type as:
+Note that the primitive types are always written in lowercase.
+
+=== Type Aliases (`type`)
+
+A type expression is an expression that evaluates to a type, such as:
+
+[source,typescript]
+----
+true | false
+----
+
+In TypeScript, you can alias such expressions with _type aliases_:
 
 [source,typescript]
 ----
 type TrueOrFalse = false | true
 ----
 
-The `|` is a type operator that takes the union of the two types on either side. The expression `true | false` can be read as "true or false". The type `TrueOrFalse` is built-in to TypeScript, where it's more often referred to as `boolean`. (Unfortunately, it has lower casing):
+`TrueOrFalse` becomes a type that contains the values `false` and `true`, and can be used as any other type:
+
+[source,typescript]
+----
+const amIHappy: TrueOrFalse = true
+----
+
+Since `TrueOrFalse` contains the exact same number of values as `boolean`, these two types are equivalent to each other--they're just different names for the same type. You can view the `boolean` type as being a type alias for `true | false`:
 
 [source,typescript]
 ----
@@ -190,36 +218,145 @@ The `|` is a type operator that takes the union of the two types on either side.
 type boolean = false | true
 ----
 
-![image](https://gist.github.com/assets/14206504/74574b06-4d89-4d87-8989-4eaa4e830c45)
+=== `number`
 
-
-== Union types: numbers, char
-
-We can add more bits of information, that gives us other interesting data types:
+You could create a `Digit` type that contains the numbers 0–9:
 
 [source,typescript]
 ----
-type NaturalNumbers = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-type Integer = -10 | -9 | -8 | -7 | -6 | -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-type RealNumber = 0 | 0.0000000000001 | 0.0000000000002
-type Character = 'a' | 'b' | 'c' | 'd' | 'e' | 'f'
+type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 ----
 
-We can think of `number` as being the union between all possible numeric values.
-
-== `typeof` type guards
-
-If the type of an identifier is a union, we may need to perform som validation at runtime before we can do anything with the value:
+Then _imagine_ that you could extend this to all JavaScript numbers:
 
 [source,typescript]
 ----
-const padLeft = (value: string, padding: string | union) =>
-  typeof padding === 'number' ? `${Array(padding + 1).join(" ")}${value}`
-                              : `${padding}${value}`
-}
+// Pseudo code
+type NaturalNumbers = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | ...
+type Integer = ... | -10 | -9 | -8 | -7 | -6 | -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | ...
+type FloatingPointNumbers = ... | 0 | ... | 0.0000000000001 | ... | 0.0000000000002 | ...
 ----
 
-If `typeof padding === 'number'` is true, TypeScript infers that the type of `padding` is `number`, which allows us to use the `+` operator and pass the result to `Array()`.
+Then you could think of the `number` type as being defined as the type that contains all integers, floating point numbers, `Infinity`, `-Infinity`, and `NaN`.
+
+[source,typescript]
+----
+// Pseudo code
+type number = Integer | FloatingPointNumbers | Infinity | -Infinity | NaN
+----
+
+=== `string`
+
+The `string` type contains all strings, and you can think of it in similar terms as the `number` type:
+
+[source,typescript]
+----
+// Pseudo code
+type string = 'a' | 'b' | 'c' | ... | 'z' | 'aa' | 'ab' | 'ac' | ... | 'az' | 'ba' | 'bb' | 'bc' | ... | 'zz' | 'aaa' | 'aab' | ...
+----
+
+Again, this is just pseudo code. In reality, the `number` and `string` types are built-in types in TypeScript, and you cannot redefine them.
+
+=== `null` and `undefined`
+
+The `null` and `undefined` types are the types that contain the values `null` and `undefined`, respectively:
+
+[source,typescript]
+----
+const nothing: null = null
+const notDefined: undefined = undefined
+----
+
+As with any literal type, they are most useful when combined with other types:
+
+[source,typescript]
+----
+type MaybeNumber = number | undefined
+const maybeNumber: MaybeNumber = 42
+const maybeNot: MaybeNumber = undefined
+----
+
+TIP: whenever you have a choice, prefer to use `undefined` over `null`. `undefined` is a more consistently used in Node.js and DOM APIs, is the result when indexing out of bounds, and is the default value for uninitialized variables.
+
+=== `Symbol` and `bigint`
+
+Finally, you have the primitive data types `bigint` that is the type that contains all https://developer.mozilla.org/en-US/docs/Glossary/BigInt[BigInts], and `symbol` that contains all https://developer.mozilla.org/en-US/docs/Glossary/Symbol[Symbols].
+
+== Type Inference
+
+So far in our code examples, we have annotated every single identifier with a type:
+
+[source,typescript]
+----
+const age: number = 21
+const ageAsString: string = age.toString()
+----
+
+But if you think for a second about this code, you can easily deduct that the program is correct:
+
+1. `age` is assigned the value `21`, thus `age` must be of type `number`.
+2. Since `age` is a number, you can call age.toString()`, which evaluates to a value of type `string`.
+3. Therefore, `ageAsString` must be of type `string`
+
+TypeScript is able to perform the same line of reasoning, which means that you can omit the type annotations without getting any type errors:
+
+[source,typescript]
+----
+const age = 21
+const ageAsString = age.toString()
+----
+
+This looks just like JavaScript, and is in fact also a valid TypeScript program. This ability of TypeScript to deduct the type of variables is called _type inferrence_.
+
+1. On the first line, TypeScript infers that the value of `age` is `number`.
+2. On the second line, TypeScript infers that the type of `age.toString()` is `string`.
+3. Lastly, TypeScript infers that the type of `ageAsString` is `string`.
+
+Why then do we need type annotations? The answer is that when the type cannot be inferred by its usage. For example, in the following code, TypeScript cannot infer the type of `value`:
+
+[source,typescript]
+----
+const twice = (value: number) => 2 * value
+----
+
+The first argument in the `twice` function is annotated with the type `number`, so that TypeScript can guarantee that whatever goes into the multiplication is a number. More on <<_functions, functions later>>.
+
+=== Type Inference of Primitive Values
+
+When you assign a value to a variable, TypeScript infers the type of the variable based on the type of the assigned value. In the example below, `thomas` is of type `User`. When the variable `user` is assigned `thomas`, the type inferred type is also `User`:
+
+.The type of `user` is inferred as `User`
+[source, typescript]
+----
+const thomas: User = ...
+const user = thomas
+----
+
+Unfortunately, there is one inconsistency in the type inference mechanism: TypeScript does not infer the type of value literals as the corresponding type literal; in the example below, the variable `pi` is inferred as `number`, not `3.14159`:
+
+.The type of `pi` is inferred as `number`
+[source,typescript]
+----
+const pi = 3.14159
+----
+
+Here's how TypeScript infers primitive values:
+
+* numbers (`1`, `0.5`, `NaN`, `100`) are inferred as `number`
+* strings (`'hello'`, `"world"`) are inferred as `string`
+* booleans (`true`, `false`) are inferred as `boolean`
+* `undefined` is inferred as `undefined`
+* `null` is inferred as `null`
+* `Symbol` is inferred as `symbol`
+* `bigint` is inferred as `bigint`
+
+To infer it as the literal type, you can annotate the use a _type assertion_:
+
+.The type of `pi` is inferred as `3.14159`
+[source,typescript]
+----
+const pi = 3.14159 as 3.14159
+----
 
 == The `unknown` type
 
@@ -228,28 +365,21 @@ The `unknown` type contains all types, including the types we haven't yet covere
 [source,typescript]
 ----
 // Pseudo code
-type unknown = boolean | number | string | ...
+type unknown = boolean | number | string | null | undefined...
 ----
 
-If an identifier is typed with `unknown`, TypeScript can't infer any information from it:
-
-[source,typescript]
-----
-const data: unknown
-----
-
-Before we can do anything with `data`, we need to validate it:
+If an identifier is typed with `unknown`, TypeScript can't infer any information from it, because it can be assigned any value:
 
 [source,typescript]
 ----
-if(typeof data === 'number') {
-  console.log('double `data`:', data * 2)
-} else {
-  console.log('`data` is not a number')
-}
+const a: unknown = 123
+const b: unknown = { a: 'a' }
+const c: unknown = () => 123
 ----
 
 You may encounter the `any` type at some point. `any` is the same type as `unknown`, but it also _disables the type checker_. Never ever use it. If you really want to work around the type system, it's better to be explicit.
+
+WARNING: The `any` type disables the type checker--never use it!
 
 == Tuples(product types)
 
@@ -395,7 +525,7 @@ type Person = {
 
 In statically typed programming languages such as C++, the property names of records (classes) do not exist at runtime; in memory, the records are stored as arrays.
 
-== Optional types
+== Optional Properties
 
 Sometimes, we want to allow properties to be optional:
 
@@ -461,24 +591,49 @@ const b: A = { prop: 1}
 const b: A = {}
 ----
 
+== Type Guards
 
-== `undefined` vs `null`
+If the type of an identifier is a union type, we may need to perform som validation at runtime before we can do anything with the value. A conditional statement or expression that checks the type of a value at runtime is called a _type guard_.
 
-In JavaScript, `undefined` and `null` serves similar purposes. Whenever possible, it is best to settle on either of these options. Consider this example:
+=== Non-null and non-undefined type guards
+
+A nullable or optional value has a type that is a union with `null` or `undefined`. If the type of an identifier is a union with `null` T | undefined`, we can use the `!` operator to assert that the value is not `undefined`:
+
+=== The `typeof` type guard
+
+The `typeof` operator can be used to check the type of a primitive value at runtime:
 
 [source,typescript]
 ----
-// Do
-type Options = {
-  color: string | undefined
-}
-// Don't
-type Options = {
-  color: string | undefined | null
+if(typeof value === 'number') {
+  console.log('Double the value', value * 2)
 }
 ----
 
-What is the difference between `undefined` and `null`? It is not entirely clear... maybe they are equivalent, but if so we are just forced to think more and write more code that handles the different use cases.
+If `typeof value === 'number'` is true, TypeScript infers that the type of `value` is `number` _inside the conditional block_. This allows the use of `value` in the arithmetical expression.
+
+This is how TypeScript infers the type based on the string in the `typeof === ` expression:
+
+- `typeof x === 'number'` infers the type of `x` as `number`
+- `typeof x === 'string'` infers the type of `x` as `string`
+- `typeof x === 'boolean'` infers the type of `x` as `boolean`
+- `typeof x === 'undefined'` infers the type of `x` as `undefined`
+- `typeof x === 'function'` infers the type of `x` as `function`
+- `typeof x === 'object'` infers the type of `x` as `object | null`
+
+NOTE: That `typeof x === 'object'` does not infer the type of `x` as `object` because `typeof null === 'object'` is true. This is due to a https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null[historical mistake] in the JavaScript language design, and is not something that TypeScript can fix.
+
+=== The `in` Operator
+
+TODO
+
+=== The `instanceof` Operator
+
+TODO
+
+=== User Defined Type Guards (Type Predicates)
+
+TODO
 
 == Discriminated/tagged unions & Pattern Matching
 
@@ -567,7 +722,97 @@ switch (res.tag) {
 
 This is called _pattern matching_.
 
-# Functions: Parametric Values (exponential types)
+=== Type Assertions
+
+You will encounter scenarios where you want to initialize a value to `undefined`, but later reassign it to a different value:
+
+[source,typescript]
+----
+let user: undefined | User = undefined
+
+// Later...
+user = await fetchUser() // Returns a `User`
+----
+
+In this case, you must annotate `user` with a type `undefined | User`.
+
+However, in some scenarios where you deal with records, you may have situation where you'd rather use the type inference to its greatest extent; for example, consider a state-like object:
+
+[source,typescript]
+----
+const state = {
+  user: undefined,
+  count: number
+}
+----
+
+If most properties in the object can be inferred, it would be unnecessarily verbose to annotate it as such:
+
+[source,typescript]
+----
+
+const state: {
+  user: User | undefined
+  count: number
+} = {
+  user: undefined,
+  count: number
+}
+----
+
+To save yourself from excessive boilerplate, you can annotate the `user` property with the assertion operator (`as`):
+
+[source,typescript]
+----
+const state = {
+  user: undefined as undefined | User,
+  count: number
+}
+----
+
+This tells TypeScript to infer `user` as `undefined | User`, instead of just `undefined`. You can also use it as an alternative to the type annotation separator (`:`):
+
+[source,typescript]
+----
+let user: undefined | User = undefined
+// is equivalent to:
+let user = undefined as undefined | User
+----
+
+NOTE: that nothing happens with the value on the left side--neither at runtime nor during compile time. When a TypeScript file is compiled into JavaScript, the type annotations are stripped, and you get simply:
+
+You can only use type assertion (`as`) if the value on the left side is a subset of the type on the right side. The following are valid:
+
+[source,typescript]
+----
+// Correct ✅
+const a = 1 as 1 | 2
+const b = 100 as undefined | number
+const c = undefined as undefined | number
+----
+
+But the following are incorrect:
+
+[source,typescript]
+----
+// Incorrect ❌
+const a = 1 as 2 | 3
+const b = 100 as undefined | string
+const c = null as undefined | number
+----
+
+=== Type Assertions with `unknown`
+
+There is one exception to this rule: the `unknown` type. Even though the `unknown` type is the superset of all types, it can be asserted to any subtype. But this is mathematically incoherent, and it opens the door to a trick that lets you circumvent the type system: by asserting a type as `unknown`, you can then assert the unknown type as any other type without a type error:
+
+[source,typescript]
+----
+const id = '123' as unknown as number
+----
+
+Now, TypeScript will consider `id` as a number, when it in fact is a string! In some niche cases, it can be useful to override the type checker when you are absolutely certain that you know better than TypeScript. But needless to say, once you do this, TypeScript will no longer be able to save you from runtime errors. Use `as` with great caution!
+
+== Functions: Parametric Values (exponential types)
 
 A function can be interpreted a parameterized value; that is, to construct the value, you need to provide a value for the parameter.
 
@@ -586,7 +831,7 @@ Alternatively, annotate the parameters and the return type directly:
 const isPositive = (value: number) => value > 0
 ----
 
-# Generics: Parametric Types
+== Generics: Parametric Types
 
 Similarly to the relationships between values and functions, a type can be parameterized with a _type parameter_. That is, to construct the type, we first need to provide a type for the parameter.
 
@@ -706,88 +951,6 @@ For convenience, we could let the `Error` parameter default to type `Error`
 type Result<Data, Err> = Ok<Data> | Err<Err>
 ----
 
-=== Type assertions
-
-You will encounter scenarios where you want to initialize a value to `undefined`, but later reassign it to a different value:
-
-[source,typescript]
-----
-let user = undefined
-
-// Later...
-user = await fetchUser() // Returns a `User`
-----
-
-This will result in a type error because TypeScript infers the type of `user` as the _type_ `undefined`; i.e. the type that only contains the value `undefined`. Later when you assign a value of type `User`, TypeScript complains because the type `undefined` and `User` do not overlap:
-
-![image](https://gist.github.com/assets/14206504/6407e335-b4b4-4998-998f-cf71ca70f1e8)
-
-What you can do to mitigate this issue is to annotate `user` with a union type:
-
-[source,typescript]
-----
-let user: User | undefined = undefined
-----
-
-![image](https://gist.github.com/assets/14206504/23c1d89e-369f-4fb7-ab4f-2fbbc80d4098)
-
-However, in some scenarios, you may have situation where you'd rather use the type inference as much as you can. For example, if you had a variable like this:
-
-[source,typescript]
-----
-const state = {
-  user: undefined,
-  count: number
-}
-----
-
-If most properties in the object can be inferred, it would be unecessarily verbose to annotate it as such:
-
-[source,typescript]
-----
-
-const state: {
-  user: User | undefined
-  count: number
-} = {
-  user: undefined,
-  count: number
-}
-----
-
-To save yourself from excessive boilerplate, you can annotate the `user` property with the `as` keyword:
-
-[source,typescript]
-----
-const state = {
-  user: undefined as undefined | User,
-  count: number
-}
-----
-
-This tells TypeScript to consider `user` as being in a superset of `undefined`; namely, `undefined | User`.
-
-Note that nothing happens with the value on the left side; when a TypeScript file is compiled into JavaScript, the type annotations are stripped, and you get simply:
-
-[source,js]
-----
-// Compiled JavaScript
-const state = {
-  user: undefined,
-  count: number
-}
-----
-
-You can only use the `as` keyword if the type on the left hand side is a subset of the type on the right hand side. But there is one exception to this rule: the `unknown` type. Even though the `unknown` type is the superset of all types, it can be asserted to any subtype. But this is mathematically incoherrent, and it opens the door to a trick that lets you circumvent the type system, which can easily lead to runtime errors! By asserting a type as `unknown`, you can then assert the unknown type as any other type without a type error:
-
-[source,typescript]
-----
-const id = '123' as unknown as number
-----
-
-Now, TypeScript will consider `id` as a number, when it in fact is a string! In some niche cases, it can be useful to override the type checker when you are absolutely certain that you know better than TypeScript. But needless to say, once you do this, TypeScript will no longer be able to save you from runtime errors. Use `as` with great caution!
-
-
 === Generic function types
 
 Generics can be used to construct any kind of type; for example functions:
@@ -846,9 +1009,9 @@ const reversedAlphabet = reverse(['a', 'b', 'c', 'd', 'e', 'f'])
 const reversedDigits = reverse([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 ----
 
-= Appendix
+== Appendix
 
-== Pure Functions
+=== Pure Functions
 
 A pure function is a function that always returns the same value given the same arguments.
 
@@ -878,3 +1041,36 @@ const scale = (value: number) => {
 ----
 
 Only pure functions can fully utilize the type system to generate correct code. Non-pure functions receive fewer guarantees from the type system.
+
+
+=== `@ts-ignore`
+
+A strongly typed language like TypeScript has the capability to analyze a program and prove whether it is correct, but it cannot do the opposite--that is, to prove whether a program is _incorrect_.
+
+NOTE: A type error only indicates that the compiler cannot guarantee the program's correctness——it can still be functioning correctly even with type errors.
+
+However good the TypeScript compiler is to reason about your code, there will arise scenarios where the programmer knows better than the type checker and thus want to override the type checker's decision. In these cases, you can use the `@ts-ignore` directive to tell TypeScript to ignore the type error:
+
+.A function that takes a list of strings and returns a record that maps the index of the string to the string itself.
+[source,typescript]
+----
+export const calculateZIndices = <const Keys extends string[]>(
+  keys: Keys,
+): { [key in Keys[number]]: number } =>
+  // @ts-ignore
+  Object.fromEntries(keys.map((key, index) => [key, index]))
+----
+
+This avoids the following error:
+
+----
+TS2322: Type { [k: string]: number; } is not assignable to type { [key in Keys[number]]: number;
+----
+
+Which, if you look closely at the code, is actually an inaccurate error message.
+
+However, this feature should be used with great caution. It not only forces you to outperform TypeScript in your analysis of the program, but it can severely compromise the maintainability of the code.
+
+CAUTION: A good rule of thumb is to never use `@ts-ignore`.
+
+TIP: Whenever you _do_ use `@ts-ignore``, ensure that you test the code thoroughly with automated tests.
