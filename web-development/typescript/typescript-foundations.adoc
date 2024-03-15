@@ -1,15 +1,16 @@
 = TypeScript Foundations
+Johannes Lindgren
 :imagesdir: images
 :toc:
 
-This guide is intended to teach TypeScript for programmers who are already familar with JavaScript. We'll look at the fundamental building blocks with which we can model most of our programs:
+This is a quick introduction to TypeScript for programmers who are already familiar with JavaScript. We'll look at the fundamental building blocks with which we can model most of our programs:
 
 - union Types (sum types)
 - tuples, arrays, records (product types)
 - function types (exponential types)
 - generic types (parametric types)
 
-However, before delving deep into TypeScript's syntax, let's first explore what motivates us to adopt TypeScript, and how TypeScript relates to JavaScript.
+However, before delving deep into TypeScript's syntax, let's first explore what motivates us to adopt TypeScript in the first place, and how TypeScript relates to JavaScript.
 
 == What is TypeScript?
 
@@ -1020,7 +1021,7 @@ const storyResult: HttpOkResult<{ content: unknown }> = {
 }
 ----
 
-== Generic Discriminated Unions
+=== Generic Discriminated Unions
 
 Generics (parametric types) in especially handy when combined with records and unions. With these three constructs, we can model any kind of data.
 
@@ -1149,6 +1150,17 @@ which has the intended effect:
 const reversedAlphabet = reverse(['a', 'b', 'c', 'd', 'e', 'f'])
 const reversedDigits = reverse([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 ----
+
+== TODOs
+
+Topics that were not covered in this chapter, but which I indtend to include in the future:
+
+* `typeof` type operator
+* `keyof` type operator
+* `extends` type constraint
+* `[]` type operator
+* `as const`
+* `satisfies`
 
 == Appendix
 
