@@ -1,4 +1,5 @@
 = TypeScript Foundations
+:imagesdir: images
 
 This guide is intended to teach TypeScript for programmers who are already familar with JavaScript. We'll look at the fundamental building blocks with which we can model most of our programs:
 
@@ -593,18 +594,45 @@ const b: A = {}
 
 == Type Guards
 
-If the type of an identifier is a union type, we may need to perform som validation at runtime before we can do anything with the value. A conditional statement or expression that checks the type of a value at runtime is called a _type guard_.
+Consider a type that is a union between two smaller types; for example `number | undefined`:
 
-=== Non-null and non-undefined type guards
+image:type-guard.diagrams.svg[]
 
-A nullable or optional value has a type that is a union with `null` or `undefined`. If the type of an identifier is a union with `null` T | undefined`, we can use the `!` operator to assert that the value is not `undefined`:
-
-=== The `typeof` type guard
-
-The `typeof` operator can be used to check the type of a primitive value at runtime:
+If you want to use the value as a number, you first need to check that it' not `undefined` before you can use it. This is called a _type guard_.
 
 [source,typescript]
 ----
+const value: number | undefined = ...
+if(value !== undefined) {
+  console.log('Twice', value * 2)
+}
+----
+
+TypeScript understands that if the conditional statement gets executed, `value` cannot be `undefined`, and can therefore be used as a number: TypeScript has _narrowed down_ the type from `number | undefined` to `number`.
+
+=== Non-null and non-undefined type guards
+
+A nullable or optional value has a type that is a union with `null` or `undefined`; for example, `string | null` and `number | undefined`. You can perform checks for `null` and `undefined` with the `!==` and `===` operators, respectively:
+
+[source,typescript]
+----
+const nullable: string | null = ...
+const optional: string | undefined = ...
+if(nullable !== null) {
+  console.log('Not null', nullable)
+}
+if(optional !== null) {
+  console.log('Defined', optional)
+}
+----
+
+=== The `typeof` type guard
+
+If you have a union between other types, for example, `string | number`, or `unknown`, use the `typeof` operator to check the type at runtime:
+
+[source,typescript]
+----
+const value: unknown = ...
 if(typeof value === 'number') {
   console.log('Double the value', value * 2)
 }
@@ -614,28 +642,139 @@ If `typeof value === 'number'` is true, TypeScript infers that the type of `valu
 
 This is how TypeScript infers the type based on the string in the `typeof === ` expression:
 
+- `typeof x === 'undefined'` infers the type of `x` as `undefined`
+- `typeof x === 'null'` infers the type of `x` as `object`.
 - `typeof x === 'number'` infers the type of `x` as `number`
 - `typeof x === 'string'` infers the type of `x` as `string`
 - `typeof x === 'boolean'` infers the type of `x` as `boolean`
-- `typeof x === 'undefined'` infers the type of `x` as `undefined`
+- `typeof x === 'symbol'` infers the type of `x` as `symbol`
+- `typeof x === 'bigint'` infers the type of `x` as `bigint`
+
+NOTE: `typeof x === 'object'` infers the type of `x` as `object | null` because `typeof null === 'object'` is true. This is due to a https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null[historical mistake] in the JavaScript language design, and is not something that TypeScript can fix.
+
+Non-primitive values are inferred as:
+
 - `typeof x === 'function'` infers the type of `x` as `function`
 - `typeof x === 'object'` infers the type of `x` as `object | null`
 
-NOTE: That `typeof x === 'object'` does not infer the type of `x` as `object` because `typeof null === 'object'` is true. This is due to a https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null[historical mistake] in the JavaScript language design, and is not something that TypeScript can fix.
+=== Validating Objects (`in`)
 
-=== The `in` Operator
+If the `typeof` operator returns `object`, you also need to check that the value is not `null`:
 
-TODO
+[source,typescript]
+----
+const obj: unknown = ...
+if(typeof obj === 'object' && obj !== null) {
+  console.log('The type is `object`')
+}
+----
+
+If the type of a value is `object`, you can use the `in` operator to check whether a property on that object exists:
+
+[source,typescript]
+----
+const val: unknown = ...
+if(typeof val === 'object' && val !== null && 'id' in val) {
+  console.log('The type is `{ id: unknown}`')
+}
+----
+
+Finally, given all of these checks, you can safely check the type of the property:
+
+[source,typescript]
+----
+const val: unknown = ...
+if(typeof val === 'object' && val !== null && 'id' in val && typeof val.id === 'number') {
+  console.log('The type is `{ id: number }`')
+}
+----
+
+=== The optional chaining operator
+
+If you have a deeply nested object with optional properties, it gets verbose to check for `undefined` values with the equality operator (`===`). Use the _optional chaining operator_ (`?.`) to check whether a property exists:
+
+[source,typescript]
+----
+const obj: { prop?: number }
+console.log(obj.prop?.toFixed(2))
+----
+
+The optional chaining operator is a shorthand for the following:
+
+[source,typescript]
+----
+const obj: { prop?: number }
+console.log(obj.prop === undefined ? undefined : obj.prop.toFixed(2))
+----
 
 === The `instanceof` Operator
 
-TODO
+If you use the `instanceof` operator, TypeScript infers the type of the value as the type on the right side of the operator:
+
+[source,typescript]
+----
+const value: unknown = ...
+if(value instanceof Date) {
+  console.log('The type is `Date`')
+}
+----
+
+=== `Array.isArray()`
+
+You can use the `Array.isArray()` function to check whether a value is an array:
+
+[source,typescript]
+----
+window.addEventListener('message', (event) => {
+  if(Array.isArray(event.data)) {
+    console.log('The type is `unknown[]`')
+  }
+})
+----
+
+This is preferred over `instanceof Array` which doesn't work across windows and frames.
 
 === User Defined Type Guards (Type Predicates)
 
-TODO
+We saw that validation of objects generates a lot of boilerplate code. You could extract the code like this
 
-== Discriminated/tagged unions & Pattern Matching
+[source,typescript]
+----
+type Entity = {
+  id: number
+}
+function isEntity(value: unknown): boolean {
+  return typeof value === 'object' && value !== null && 'id' in value && typeof value.id === 'number'
+}
+----
+
+However, if you use this in an if-statement, TypeScript can no longer infer the type of the value:
+
+[source,typescript]
+----
+const value: unknown = ...
+if(isEntity(value)) {
+  console.log('Id', value.id) // <-- Type Error, since 'id` doesn't exist on `unknown`
+}
+----
+
+The reason is that the type signature of `isEntity` reveals nothing about the type guard. You can include a _user-defined type guard_ to fix this:
+
+[source,typescript]
+----
+type Entity = {
+  id: number
+}
+function isEntity(value: unknown): value is Entity {
+  return typeof value === 'object' && value !== null && 'id' in value && typeof value.id === 'number'
+}
+----
+
+This function still returns a boolean, but if the return value is `true`, TypeScript infers that the type of `value` is `Entity`. The expression `value is Entity` is called a _type predicate_.
+
+CAUTION: The type predicate does not need to match the inferred type in the function body: TypeScript will simply trust that the predicate is accurate. In the example above, we could have written `value is null`, and TypeScript wouldn't have generated an error. So whenever you create a user-defined type guard, include unit tests to ensure that the type guard is accurate.
+
+=== Discriminated/tagged unions & Pattern Matching
 
 Object types, combined with unions lets us define discriminated unions (aka tagged unions).
 
