@@ -1,5 +1,6 @@
 = TypeScript Foundations
 :imagesdir: images
+:toc:
 
 This guide is intended to teach TypeScript for programmers who are already familar with JavaScript. We'll look at the fundamental building blocks with which we can model most of our programs:
 
@@ -10,7 +11,7 @@ This guide is intended to teach TypeScript for programmers who are already famil
 
 However, before delving deep into TypeScript's syntax, let's first explore what motivates us to adopt TypeScript, and how TypeScript relates to JavaScript.
 
-== Preface: Why use TypeScript
+== What is TypeScript?
 
 The main reason to adopt TypeScript is to get guarantees of code behaves at runtime at compile-time. Specifically, TypeScript helps you to prevent code from crashing. It is preferrable to give the programmer an error in the IDE than to let the client experience an incident in production. Sadly, in nature, nothing is for free; to get something, you first have to give up something else. While TypeScript gives you guarantees of how the code behaves at runtime, it forced the programmer to write in a more limited way. This is not a unique trait to TypeScript, but programming languages have been following this trend ever since the advent of computing:
 
@@ -113,7 +114,7 @@ A value is something that can be stored in memory while the program is running. 
 
 In TypeScript we also consider the _set of values_ that our variables can reference; this is called a _type_. A type is like a set in that it consistes of a collection values. The identifiers of types start with uppercase. For example, we could construct a set `Digit` that contains the numbers 0–9:
 
-// TODO
+image:Digit.svg[]
 
 We can now annotate a value `digit` with the type `Digit` to tell TypeScript that whatever value is in `digit`, it must be one of the values in `Digit`:
 
@@ -138,7 +139,7 @@ const digit = 10
 
 == Primitive Types
 
-// TODO paragraph
+We're going to explore the various types in TypeScript, starting with the most primitive types, and then moving on to more complex, composite types.
 
 === Literal/value types
 
@@ -153,20 +154,19 @@ This just tells us that `nothing` can only ever have one value: `undefined`. Not
 
 > For each literal value, there exists a corresponding type with the same name.
 
-So the symbols `undefined`, `true`, `false`, `123`, `"hello"`, and even `[1,2,3]` and `{ a: 'a' }` can be either values or types depending on where in the syntax tree they appear. For example, if a literal appears directly after an assigment operator (`=`), it is a value; but if it appears after the colons (`:`) after a variable declaration, it is a type.
+So the symbols `undefined`, `true`, `false`, `123`, `"hello"` can be either values or types depending on where in the syntax tree they appear. For example, if a literal appears directly after an assigment operator (`=`), it is a value; but if it appears after the colons (`:`) after a variable declaration, it is a type.
 
-.The black label denotes the name of the type, and the grey labels denotes the values in the type.
-// TODO
+image:primitive-types.svg[]
 
 === Sum/Union Types
 
 Value types are not very interesting on their own--they get much more interesting when they're combined into larger types. Consider the two types `true` and `false`:
 
-// TODO
+image:true-and-false.svg[]
 
 Like other strongly typed functional programming languages, TypeScript has _type operators_ that let you combine types in different ways. One of these operators is the _type union operator_ `|`, which lets you combine two types into a new types that contains all values from both operands:
 
-// TODO
+image:boolean.svg[]
 
 In TypeScript, this can be written as such:
 
@@ -177,16 +177,14 @@ const amIHappy: true | false = true
 
 The expression `true | false` can be read as "true or false", and is only evaluated at compile-time by the type checker.
 
-=== The `boolean` type
-
-The type `true | false` is such a common occurrence that TypeScript has a built-in type for it; called `boolean`:
+`true | false` is such a common occurrence that TypeScript has a built-in type for it; called `boolean`:
 
 [source,typescript]
 ----
 const amIHappy: boolean = true
 ----
 
-Note that the primitive types are always written in lowercase.
+NOTE: `boolean` is a primitive type. All primitive types are always written in lowercase.
 
 === Type Aliases (`type`)
 
@@ -219,6 +217,8 @@ Since `TrueOrFalse` contains the exact same number of values as `boolean`, these
 type boolean = false | true
 ----
 
+NOTE: Type aliases are always written in _PascalCase_.
+
 === `number`
 
 You could create a `Digit` type that contains the numbers 0–9:
@@ -245,6 +245,8 @@ Then you could think of the `number` type as being defined as the type that cont
 // Pseudo code
 type number = Integer | FloatingPointNumbers | Infinity | -Infinity | NaN
 ----
+
+This is the `number` type.
 
 === `string`
 
@@ -861,7 +863,7 @@ switch (res.tag) {
 
 This is called _pattern matching_.
 
-=== Type Assertions
+== Type Assertions
 
 You will encounter scenarios where you want to initialize a value to `undefined`, but later reassign it to a different value:
 
@@ -1090,7 +1092,7 @@ For convenience, we could let the `Error` parameter default to type `Error`
 type Result<Data, Err> = Ok<Data> | Err<Err>
 ----
 
-=== Generic function types
+=== Generic Function Types
 
 Generics can be used to construct any kind of type; for example functions:
 
