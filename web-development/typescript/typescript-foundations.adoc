@@ -1,106 +1,87 @@
-= TypeScript Foundations
+= TypeScript Foundations: An Unorthodox Introduction to TypeScript for JavaScript Programmers
 Johannes Lindgren
 :imagesdir: images
 :toc:
 
-This is a quick introduction to TypeScript for programmers who are already familiar with JavaScript. We'll look at the fundamental building blocks with which we can model most of our programs:
+This is a brief introduction to TypeScript for programmers who are already familiar with JavaScript. We'll start with the most basic language features and work ourselves up to more advanced features that lets us utilize the full power of the type checker. We'll cover topics such as:
 
-- union Types (sum types)
-- tuples, arrays, records (product types)
+- type annotation, type checking, type inference, type guards, type predicates, and type assertions.
+- literal types and primitive types
+- union types (sum types)
+- tuples, and records (product types)
+- arrays (recursive types)
 - function types (exponential types)
 - generic types (parametric types)
 
 However, before delving deep into TypeScript's syntax, let's first explore what motivates us to adopt TypeScript in the first place, and how TypeScript relates to JavaScript.
 
-== What is TypeScript?
+== Why Adopt TypeScript?
 
-The main reason to adopt TypeScript is to get guarantees of code behaves at runtime at compile-time. Specifically, TypeScript helps you to prevent code from crashing. It is preferrable to give the programmer an error in the IDE than to let the client experience an incident in production. Sadly, in nature, nothing is for free; to get something, you first have to give up something else. While TypeScript gives you guarantees of how the code behaves at runtime, it forced the programmer to write in a more limited way. This is not a unique trait to TypeScript, but programming languages have been following this trend ever since the advent of computing:
+The main reason to adopt TypeScript is to establish guarantees of how JavaScript code behaves. One concrete example is to prevent code from crashing; it is preferable to give the programmer an error in the IDE than to let the client experience an incident in production. Unfortunately, it is not so easy as to simply enable TypeScript in an existing project: before you may reap the benefits, you must first start programming in a much more restrictive way. Going from untyped languages to types languages is a shift in the programming paradigm. Since the advent of coputing, programming languages have been following a trend of becoming more restrictive while giving more compile-time guarantees:
 
 - Programming started with raw machine code and Assembly languages that directly translates to machine code. Assembly languages are notoriously difficult to reason about. Therefore, more restrictive languages soon emerged.
-- Procedural languages, such as Fortran, contrains the programmer to deal with variables, rather than registers and memory addresses.
-- Structured languages prohibits you from using `goto` statements in favor of conditional blocks, loops, and subroutines; which guarantees that the program follows the control flow. For example, in high-level languages like C, you use `if` and `for` statements, rather than `goto`.
-- Garbage-collected languages prohibits you from allocating and freeing up memory directly, but in return (to some degree) guarantees no memory leaks.
+- Procedural languages, such as Fortran, contains the programmer to deal with variables, rather than registers and memory addresses.
+- Structured languages such as C favors conditional blocks, loops, and subroutines over `goto` statements; which creates a more reasonable control flow.
+- Typed languages such as C++ prevents the programmer from using memory in the wrong way; for example by indexing an arrat with a floating point number.
+- Garbage-collected languages prohibits you from allocating and freeing up memory directly, but helps to prevent memory leaks.
 - Pure functional languages prohibits you from mutating values, which guarantees that the program can be run concurrently.
-- Pure functional languages prohibits you from making side effects, which guarantees that function calls can be cached.
 
-With every new paradigm on this list, the programmer is more and more limited in what machine-code they are able to produce; but in return, they are better able to write bug-free code. TypeScript is no different in that it adds new constraints to JavaScript; it prohibits you from using data in _potentially_ incorrect ways, which guarantees that you don't run into runtime exceptions. TypeScript limits what code you'd otherwise be allowed to write in JavaScript, but in turn gives you certain guarantees of how your program behaves at runtime. You're trading freedom against:
+With every new paradigm on this list, the programmer is more and more limited in what code they are able to produce; but in return, they are better able to write bug-free code. TypeScript is no different in that it adds new constraints to JavaScript; it prohibits you from using data in _potentially_ incorrect ways, which guarantees that you don't run into runtime exceptions. TypeScript limits what code you'd otherwise be allowed to write in JavaScript, but in turn gives you certain guarantees of how your program behaves at runtime. You're trading freedom against:
 
-- Fewer runtime errors
-- Improved refactoring
-- Documententation for your modules
+- Fewer runtime errors—by analyzing the structure of your data and functions
+- Improved refactoring—IDEs can better understand how your code is connected
+- Improved documentation—from the type signature
 
-=== A Language or a Linter?
+=== What is TypeScript—a Language or a Linter?
 
-TypeScript may have started out as a compiled programming language, adding new capabilities to JavaScript such as classes. But as JavaScript incrementally adopted these features, TypeScript today is more often used as a linter that checks your code for potential errors.
+TypeScript started out as a compiled programming language similar to JavaScript, but with types, classes, and other exotic features that were left out from an aging JavaScript (ECMAScript) standard. But as new standards were released and implemented by the browsers, most of the features that TypeScript initially brought to the ecosystem were added to the JavaScript language itself. TypeScript today is no longer widely used to compile JavaScript code—this task is left to the bundlers—but its sole purpose is to serve as a _linter_ which analyzes the code for imperfections before the compiled code ever runs.
 
-ESLint can eliminate code such as this:
+When you write TypeScript code such as this:
 
-[source,javascript]
+[source,typescript]
 ----
-var a = 0
-if(a == ''){
-  console.log('zero equals empty string')
-}
+const pi = 3.14159
+console.log('tau', 2 * pi)
 ----
 
-In favor of this:
+TypeScript verifies that the operations on all values can be performed without runtime errors. The example above will pass the type checker, because TypeScript recognizes that both `pi` and `2` are numbers, which can be multiplied.
 
-[source,javascript]
-----
-const a = 0
-if(a === ''){
-  console.log('zero equals empty string')
-}
-----
+If you instead would have written:
 
-TypeScript can analyze the code at a deeper level and understand that the log statment will never execute. Furthermore, it can understand when code will result in runtime errors:
-
-[source,javascript]
+[source,typescript]
 ----
-// Valid JavaScript, but invalid TypeScript
-const double = (value) => value * 2
-let b = double('twelve')
+const pi = '3.14159'
+console.log('tau', 2 * pi)
 ----
 
-Though TypeScript can only give false errors: some programs have valid syntax, no runtime error, yet not pass the type checker:
+TypeScript would have generated a _type error_ in the IDE, because multiplying a string with a number would have generateda runtime error.
 
-[source,javascript]
+Note that the code above does not contain any TypeScript-specific syntax, yet TypeScript was able to analyze and catch the error regardless. TypeScript also bring its own syntax to the game, such as type annotations:
+
+[source,typescript]
 ----
-// Valid JavaScript with no runtime errors, yet invalid TypeScript
-const double = (value) => value * 2 // <- TypeScript cannot infer the type of `value`
-const pi = 3.14
-const tau = double(pi)
-----
-
-If TypeScript cannot guarantee that the code is correct, it will give an error, forcing you to refactor your program.
-
-TypeScript lets us annotate JavaScript with _type annotations_. The example above can be made to to work by annotating the `value` parameter:
-
-[source,javascript]
-----
-// Valid JavaScript AND TypeScrip
-const double = (value: number) => value * 2
-const pi = 3.14
-const tau = double(pi)
+const pi: number = 3.14159
+console.log('tau', 2 * pi)
 ----
 
-Though as of today (2023), this code cannot run in the browser. Therefore, `.ts` files are compiled into `.js` files simply by eliminating the type annotations. Code such as this:
+This code cannot run in the browser, because the type annotations are not valid JavaScript. When you compile TypeScript code into JavaScript code, the types are simply eliminated from the output. The code above would be compiled into:
 
-[source,javascript]
+[source,typescript]
 ----
-const double = (value: number) => value * 2
+const pi = 3.14159
+console.log('tau', 2 * pi)
 ----
 
-gets transformed into this:
-
-[source,javascript]
-----
-const double = (value) => value * 2
-----
+The type checking is a separate process from the compilation, hence why TypeScript nowadays is regularly used as a linter, but seldom as a compiler.
 
 In this sense, we can understand TypeScript more as a powerful linter, rather than an entirely different programming language.
 
-With the constraints in mind, we can also understand TypeScript as _subset_ of JavaScript. While some claim TypeScript to be a _superset_ of JavaScript, I'd argue otherwise. If anything, I think it is _JavaScript_ that is a superset of TypeScript. Consider all JavaScript and TypeScript programs there is: if you take a random JavaScript program sample, there is only a slim chance that it passes the checks by TypeScript. But take (almost) any TypeScript program, strip away the type annotation, and you'd have a valid JavaScript program. In this sense, TypeScrip is a _subset_ of JavaScript.
+Excluding the type annotations (and a couple of TypeScript-specific features), all valid TypeScript programs are valid JavaScript programs. But not all valid JavaScript programs are able to pass TypeScript's type checker. While you might have heard otherwise, in this sense, TypeScript is a _subset_ of JavaScriptWith—not the other way around:
+
+.All programs that pass the type checker are valid JavaScript programs, but not all valid JavaScript programs pass the type checker; hence TypeScript is a subset of JavaScript.
+image::ts-js-subset.svg[]
+
+NOTE: Because TypeScript adds new syntax and features to the language, from a certain point of view, TypeScript can be considered a superset of JavaScript: while most JavaScript programs cannot pass the type checker, all be compiled by TypeScript; but not all TypeScript programs can be run as JavaScript. Though, since TypeScript is seldom used as a compiler nowadays, this point of view is less relevant.
 
 == Types
 
@@ -1153,50 +1134,23 @@ const reversedDigits = reverse([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 == TODOs
 
-Topics that were not covered in this chapter, but which I indtend to include in the future:
+Topics that were not covered, but which I intend to include in the future:
 
+* Mapped types
 * `typeof` type operator
 * `keyof` type operator
 * `extends` type constraint
+* `extends` conditional types, and `infer`
 * `[]` type operator
 * `as const`
 * `satisfies`
+* `@ts-expect-error` for testing generic types
 
 == Appendix
 
-=== Pure Functions
+Here are some additional topics that are not essential, and that do not fit well in the main text.
 
-A pure function is a function that always returns the same value given the same arguments.
-
-Pure function always includes the following in its type signature
-
-* the conditions for executing in the parameters
-* the results in the return type
-
-For example, the following pure function can always run given the listed arguments, and always has the same result:
-
-[source,typescript]
-----
-const scale = (value: number) => 2
-----
-
-However, neither of these functions are pure
-
-[source,typescript]
-----
-// Can return different values even if the arguments are identical
-const scale = (value: number) => value * Math.random()
-// The effects from console.log() are not embedded in the return value. There is no guarantee that it
-const scale = (value: number) => {
-  console.log('hello')
-  return value * 10
-}
-----
-
-Only pure functions can fully utilize the type system to generate correct code. Non-pure functions receive fewer guarantees from the type system.
-
-
-=== `@ts-ignore`
+=== Ignoring errors with `@ts-ignore`
 
 A strongly typed language like TypeScript has the capability to analyze a program and prove whether it is correct, but it cannot do the opposite--that is, to prove whether a program is _incorrect_.
 
