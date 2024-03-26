@@ -113,3 +113,23 @@ This makes the code _much_ easier to test. Test are very important to ensure tha
 * Because the function always produces the same results for the same input, the tests are deterministic and can be parallelized. Say goodbye to flaky tests!
 
 Static code analysis tools such as TypeScript's type checker and `@typescript-eslint` helps to make certain guarantees for how the code behaves at runtime. The more you utilize the type system, the more these tools can help you. By writing pure functions, you are leveraging the type system to its fullest extent.
+
+== Pure Code in Module Scope
+
+The code in a JavaScript module gets executed one time when it gets imported for the very first time; if you import a module several times, the module's code is executed only once. Consider what happens if you run side effects in the module scope; for example, if you read from a global variable before you export a value:
+
+[source,typescript]
+----
+export const someValue = window.counter + 10
+----
+
+If loading a module results in side effects, the behaviour of the application becomes unpredictable. For example, bundlers do not give any guarantees of the order in which the modules are executed. This is why it is crucial to avoid side effects in the module scope. In other words: a JavaScript module should consist of pure functional code.
+
+Any code that runs side effect must be encapsulated in a function:
+
+[source,typescript]
+----
+export const fetchUsers = () => { ... }
+----
+
+Since the function is not executed when the module is imported, the side effect is not triggered, and code at the module level is therefore considered pure.
