@@ -116,14 +116,15 @@ Static code analysis tools such as TypeScript's type checker and `@typescript-es
 
 == Pure Code in Module Scope
 
-The code in a JavaScript module gets executed one time when it gets imported for the very first time; if you import a module several times, the module's code is executed only once. Consider what happens if you run side effects in the module scope; for example, if you read from a global variable before you export a value:
+The code in a JavaScript module gets executed one time when it gets imported for the very first time; if you import a module several times, the module's code is executed only once. Consider what happens if you run side effects in the module scope; for example, if you write to a global variable at the module level:
 
 [source,typescript]
 ----
-export const someValue = window.counter + 10
+export const someObj = createObj()
+window.someObj = someObj
 ----
 
-If loading a module results in side effects, the behaviour of the application becomes unpredictable. For example, bundlers do not give any guarantees of the order in which the modules are executed. This is why it is crucial to avoid side effects in the module scope. In other words: a JavaScript module should consist of pure functional code.
+If loading a module results in side effects, the behaviour of the application becomes unpredictable. For example, bundlers do not give any guarantees of the order in which the modules are executed, so you never know in which order the effects run; and if the exports are never referenced, the bundler might try to optimize the code by eliminating the import from the final output, which means that the effect never runs. This is why it is crucial to avoid side effects in the module scope. In other words: a JavaScript module should consist of pure functional code.
 
 Any code that runs side effect must be encapsulated in a function:
 
