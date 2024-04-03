@@ -1,4 +1,4 @@
-= TypeScript Foundations: An Introduction to TypeScript for JavaScript Programmers
+= TypeScript Essentials: An Introduction to TypeScript for JavaScript Programmers
 Johannes Lindgren
 :imagesdir: images
 :toc:
