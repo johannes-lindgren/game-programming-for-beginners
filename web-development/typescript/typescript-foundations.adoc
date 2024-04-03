@@ -1,4 +1,4 @@
-= TypeScript Foundations: An Unorthodox Introduction to TypeScript for JavaScript Programmers
+= TypeScript Foundations: An Introduction to TypeScript for JavaScript Programmers
 Johannes Lindgren
 :imagesdir: images
 :toc:
