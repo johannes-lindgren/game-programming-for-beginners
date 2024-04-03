@@ -1,4 +1,4 @@
-= TypeScript Essentials: An Introduction to TypeScript for JavaScript Programmers
+= TypeScript Essentials
 Johannes Lindgren
 :imagesdir: images
 :toc:
